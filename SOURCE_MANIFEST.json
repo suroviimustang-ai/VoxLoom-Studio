@@ -81,8 +81,8 @@
   },
   {
     "path": "docs/BUILDING.md",
-    "bytes": 8605,
-    "sha256": "5d9209fc3d505db1380e1f64c0f46e3114b4b4ba1e898d3a2589583dacf844fe"
+    "bytes": 9430,
+    "sha256": "656b35ea4ff0ba8a81ba919c0ce807c393092b5355ec38bf8ffe6e7c4a0d27a0"
   },
   {
     "path": "docs/CODING_STANDARDS.md",
@@ -686,8 +686,8 @@
   },
   {
     "path": "README.md",
-    "bytes": 11316,
-    "sha256": "2e9a23852afe1f3c2f2eb916aa4e74579bad62c59310cdf4ea0bbdf951b3ab4f"
+    "bytes": 11722,
+    "sha256": "9cd93102ebdfcd3179ce05b42841c1030b9870d5e3ac4c42ec76f28c9bcbd9e7"
   },
   {
     "path": "requirements-dev.txt",

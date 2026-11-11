@@ -6,9 +6,15 @@
 
 | Платформа | Профиль | Статус |
 | --- | --- | --- |
-| Windows 10/11 x64 | Python 3.11 x64, CPU | Локально проверяются тесты и полный EXE |
-| macOS 15+ Apple Silicon | Python 3.11 ARM64, CPU | Путь сборки и CI подготовлены; нативный прогон требуется |
-| Ubuntu 24.04 x64 | Python 3.11, CPU | Путь сборки и CI подготовлены; нативный прогон требуется |
+| Windows 10/11 x64 | Python 3.11 x64, CPU | Локальные проверки полного EXE и нативный CI прошли |
+| macOS 15+ Apple Silicon | Python 3.11 ARM64, CPU | Нативные импорты, тесты и проверки интерфейса в CI прошли |
+| Ubuntu 24.04 x64 | Python 3.11, CPU | Нативные импорты, тесты и проверки интерфейса в CI прошли |
+
+[Прогон GitHub Actions от 11 ноября 2026 года](https://github.com/suroviimustang-ai/VoxLoom-Studio/actions/runs/42965738853):
+47 тестов и шесть конфигураций экрана на каждой ОС. CI использует Windows Server
+2022, macOS 15 ARM64 и Ubuntu 24.04 x64. Полная упаковка и проверки всех моделей
+выполнены локально на Windows; для macOS/Linux готовые bundles ещё требуют
+отдельной проверки после самостоятельной сборки.
 
 Intel Mac не входит в этот профиль: PyTorch прекратил выпуск macOS x86_64 wheels
 после ветки 2.2. Наш набор использует 2.8. Не устанавливайте ARM64 Python через
@@ -130,8 +136,10 @@ Windows lock `requirements-lock.txt` нельзя использовать ка�
 на macOS/Linux: в нём Windows-пакеты и CPU-wheel суффиксы. Для других ОС используется
 `install_dependencies.py`; после успешной проверки сохраните свой `pip freeze`.
 
-GitHub Actions содержит матрицу Windows, macOS ARM64 и Ubuntu. Добавленная
-конфигурация не означает, что удалённые прогоны уже выполнены.
+GitHub Actions содержит матрицу Windows, macOS ARM64 и Ubuntu.
+Актуальный результат смотрите в разделе Actions репозитория; первый успешный
+нативный прогон указан выше. CI не скачивает большие веса и не проверяет качество
+распознавания на реальной речи.
 
 Источники: [PyInstaller: нативная сборка](https://pyinstaller.org/en/stable/operating-mode.html),
 [управление Python через uv](https://docs.astral.sh/uv/guides/install-python/),
