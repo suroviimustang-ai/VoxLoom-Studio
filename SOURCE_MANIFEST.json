@@ -26,8 +26,8 @@
   },
   {
     "path": ".github/workflows/release.yml",
-    "bytes": 4183,
-    "sha256": "7f722e8d0b3934a4bfadd5fa5991193cf201897808cacc3ab656c9d783adf452"
+    "bytes": 4215,
+    "sha256": "b94a54238abfee11f4022a9fe91b22ea889b3f2e84d26f0ca2a7bc73f2b3ef22"
   },
   {
     "path": ".gitignore",
@@ -951,8 +951,8 @@
   },
   {
     "path": "tools/release_assets.py",
-    "bytes": 6423,
-    "sha256": "1c09c6e6f83d8a70c9fc13cb03d3ae2db7424d12d55103c20cc13b3cca913b77"
+    "bytes": 6703,
+    "sha256": "449854969bb72999c70a764489a98bd772d092871a4bee1d479345e55abd8077"
   },
   {
     "path": "tools/verify_native_bundle.py",

@@ -29,10 +29,15 @@ def gh(*args, capture=False):
 
 
 def release():
+    # The by-tag REST endpoint returns published releases only. Resolve the
+    # draft through gh first, then use its database ID for complete asset data.
+    identifier = json.loads(
+        gh("release", "view", TAG, "--json", "databaseId", capture=True)
+    )["databaseId"]
     return json.loads(
         gh(
             "api",
-            f"repos/{os.environ['GITHUB_REPOSITORY']}/releases/tags/{TAG}",
+            f"repos/{os.environ['GITHUB_REPOSITORY']}/releases/{identifier}",
             capture=True,
         )
     )
