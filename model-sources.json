@@ -1,0 +1,9 @@
+{
+  "whisper": {
+    "base": {"repository": "Systran/faster-whisper-base", "revision": "ebe41f70d5b6dfa9166e2c581c45c9c0cfc57b66", "sha256": "d01c3014881c9c6f3133c182f3d2887eb6ca1c789a7538c5c007196857a0a6a9"},
+    "small": {"repository": "Systran/faster-whisper-small", "revision": "536b0662742c02347bc0e980a01041f333bce120", "sha256": "3e305921506d8872816023e4c273e75d2419fb89b24da97b4fe7bce14170d671"},
+    "large-v3-turbo": {"repository": "mobiuslabsgmbh/faster-whisper-large-v3-turbo", "revision": "0a363e9161cbc7ed1431c9597a8ceaf0c4f78fcf", "sha256": "e76620f83d5f5b69efd3d87e3dc180c1bd21df9fbebacfd4335e5e1efcc018da"}
+  },
+  "deepfilter": {"url": "https://raw.githubusercontent.com/Rikorose/DeepFilterNet/82b0c7ad33fc756284104053817d1e855d8d8386/models/DeepFilterNet3.zip",
+    "files": {"config.ini": "415eb925d44990d938fb739f514aa3662c1ec0ea836cff044fa1291b82cb4290", "checkpoints/model_120.ckpt.best": "23b92884f63ccf54bb026014604625ab231657b6480df65db4095c4c171e6003"}}
+}

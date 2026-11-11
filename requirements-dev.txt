@@ -1,0 +1,2 @@
+# Code quality tooling, separate from runtime and packaging dependencies.
+ruff==0.17.4

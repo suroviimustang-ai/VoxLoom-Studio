@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "voxloom-studio"
+version = "0.2.2"
+description = "Local DAW-style speech restoration, segmentation and transcription"
+requires-python = ">=3.11"
+license = {file = "LICENSE"}
+readme = "README.md"
+authors = [{name = "MatSoftAI and VoxLoom contributors"}]
+
+[tool.setuptools.packages.find]
+include = ["voxloom*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+extend-include = ["*.spec"]
+extend-exclude = [
+    ".venv*", ".tooling", "artifacts", "public-export",
+    "build", "build-flexsed", "build-flexsed-entry", "build-native",
+    "dist", "dist-flexsed", "dist-native",
+    "release", "results", "models", "licenses", "voxloom/_vendor",
+]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# PyInstaller injects these names when it executes the spec file.
+"VoxLoom.spec" = ["F821"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"

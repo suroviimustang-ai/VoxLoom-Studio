@@ -1,0 +1,67 @@
+name: Native platform checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  code-quality:
+    runs-on: windows-2022
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned Python quality tools
+        run: python -m pip install -r requirements-dev.txt
+      - name: Python formatting and static checks
+        run: python tools/check_style.py
+      - name: PowerShell formatting and static checks
+        shell: pwsh
+        run: |
+          Save-Module -Name PSScriptAnalyzer -RequiredVersion 1.24.0 -Path .tooling -Repository PSGallery -Force
+          ./tools/check_powershell.ps1
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022, macos-15, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    env:
+      PYTHONUTF8: '1'
+      QT_QPA_PLATFORM: offscreen
+      HF_HUB_OFFLINE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Linux audio and Qt libraries
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libportaudio2 libsndfile1 libegl1 libgl1 libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-image0 libxcb-render-util0 libxcb-xinerama0 libxcb-randr0 libxcb-shape0 fonts-dejavu-core
+      - name: Install tested dependencies
+        run: |
+          python -m venv .venv-ci
+          python tools/ci_install.py
+      - name: Dependency consistency
+        run: python -m pip check
+      - name: Native runtime imports
+        run: python tools/doctor.py
+      - name: Unit and recovery tests
+        run: python -m pytest -q --junitxml=artifacts/tests.xml
+      - name: Startup display checks
+        run: python tools/check_startup.py
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: checks-${{ matrix.os }}
+          path: |
+            artifacts/doctor.json
+            artifacts/tests.xml
+            artifacts/startup-check/
+          retention-days: 14

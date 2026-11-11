@@ -1,0 +1,6 @@
+# Install after the base and neural requirements.
+transformers==4.57.1
+einops==0.8.1
+huggingface-hub==0.36.2
+tokenizers==0.22.2
+safetensors==0.8.0
