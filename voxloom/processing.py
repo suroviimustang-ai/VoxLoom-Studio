@@ -32,11 +32,22 @@ def resource_root() -> Path:
 
 
 def model_directory(name: str) -> Path:
+    from .modelpacks import installed_directory
+
+    installed = installed_directory(writable_models(), name)
+    if installed is not None:
+        return installed
     bundled = resource_root() / "models" / name
     return bundled if bundled.is_dir() else writable_models() / name
 
 
 def writable_models() -> Path:
+    override = os.environ.get("VOXLOOM_MODEL_HOME")
+    if override:
+        path = Path(override).expanduser()
+        if not path.is_absolute():
+            raise ValueError("VOXLOOM_MODEL_HOME must be an absolute path")
+        return path
     if not getattr(sys, "frozen", False):
         return resource_root() / "models"
     if sys.platform == "win32":
@@ -46,9 +57,9 @@ def writable_models() -> Path:
             / "models"
         )
     if sys.platform == "darwin":
-        return Path.home() / "Library/Caches/VoxLoom/models"
+        return Path.home() / "Library/Application Support/VoxLoom/models"
     return (
-        Path(os.environ.get("XDG_CACHE_HOME", str(Path.home() / ".cache")))
+        Path(os.environ.get("XDG_DATA_HOME", str(Path.home() / ".local/share")))
         / "voxloom/models"
     )
 
@@ -158,7 +169,7 @@ def denoise(
         directory = model_directory("DeepFilterNet3")
         if not (directory / "config.ini").is_file():
             raise RuntimeError(
-                "Нет модели DeepFilterNet3 в папке models. Выполните подготовку моделей."
+                "Нет модели DeepFilterNet3. Установите пакет через «Модели → Установить пакет»."
             )
         torch.set_num_threads(2)
         model, state, _ = init_df(

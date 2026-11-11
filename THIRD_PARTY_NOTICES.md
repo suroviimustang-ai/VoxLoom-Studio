@@ -1,17 +1,20 @@
-# Компоненты VoxLoom Studio
+# VoxLoom Studio components
 
-Новый проект MatSoftAI. Интерфейс создан отдельно по рабочим принципам Keyboard_Lab:
-транспорт, временная шкала, выделения и таблица событий. Прямых runtime-зависимостей
-от Keyboard_Lab и SpeechCleaner нет. Концепция look-ahead limiter адаптирована из
-`SpeechCleaner-Avalonia/app/dsp/limiter.py`: добавлено общее управление усилением каналов.
-Подход к ресемплингу нейросетевых backend также опирается на SpeechCleaner.
+**English** | [Русский](THIRD_PARTY_NOTICES.ru.md)
 
-Сторонние библиотеки и веса сохраняют свои лицензии. Тексты доступных лицензий
-собираются из установленных дистрибутивов в `licenses/`; версии — в
-`licenses/dependencies.json` и `requirements-lock.txt`.
+VoxLoom is a separate MatSoftAI project. Its interface was developed independently
+using Keyboard_Lab's workflow principles: transport controls, a timeline,
+selections and an event table. There are no direct runtime dependencies on
+Keyboard_Lab or SpeechCleaner. The look-ahead limiter concept was adapted from
+`SpeechCleaner-Avalonia/app/dsp/limiter.py`, adding linked gain control across
+channels. The neural backend resampling approach also draws on SpeechCleaner.
 
-- PyQt6: GPLv3 / коммерческая лицензия Riverbank. Эта сборка использует публичную GPL-версию.
-- Qt: лицензии соответствующих модулей в дистрибутиве PyQt6-Qt6.
+Third-party libraries and weights retain their respective licenses. Available
+license texts are collected from installed distributions into `licenses/`;
+versions are recorded in `licenses/dependencies.json` and `requirements-lock.txt`.
+
+- PyQt6: GPLv3 / Riverbank commercial license. This build uses the public GPL version.
+- Qt: licenses of the relevant modules in the PyQt6-Qt6 distribution.
 - noisereduce: MIT, https://github.com/timsainb/noisereduce
 - DeepFilterNet: MIT / Apache-2.0, https://github.com/Rikorose/DeepFilterNet
 - RNNoise: BSD-3-Clause, https://github.com/xiph/rnnoise
@@ -21,12 +24,13 @@
 - Whisper: MIT, https://github.com/openai/whisper
 - CTranslate2: MIT, https://github.com/OpenNMT/CTranslate2
 - ONNX Runtime: MIT, https://github.com/microsoft/onnxruntime
-- PyAV и входящие библиотеки FFmpeg: лицензии конкретной бинарной поставки.
-- NumPy, SciPy, soundfile, sounddevice, pyloudnorm, PyTorch: тексты в `licenses/`.
+- PyAV and bundled FFmpeg libraries: licenses of the specific binary distribution.
+- NumPy, SciPy, soundfile, sounddevice, pyloudnorm and PyTorch: license texts in `licenses/`.
 
-При внешнем распространении нужны соответствующие исходники/уведомления для
-компонентов с copyleft, включая PyQt. Этот файл не перелицензирует зависимости.
-# FlexSED addition
+Redistribution requires the applicable corresponding source and notices for
+copyleft components, including PyQt. This file does not relicense dependencies.
+
+## FlexSED
 
 FlexSED inference sources: JHU-LCAP/FlexSED, copyright (c) 2025 Jiarui Hai,
 MIT; license retained in licenses/FlexSED/LICENSE. Checkpoint Higobeatz/FlexSED

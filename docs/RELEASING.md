@@ -1,24 +1,51 @@
-# Public source release procedure
+# Release procedure
 
-The GitHub project distributes source code and build instructions. Do not attach
-EXE files, compiled bundles or neural weights to the public repository/release.
+Source history contains code, build recipes, documentation and a trusted model
+catalog. Publish compiled applications and model ZIPs as GitHub Release assets,
+never as Git blobs. Do not publish private recordings, transcripts or local logs.
 
-1. Check the native dependency profile and instructions in BUILDING.md.
-2. Run `tools/prepare_models.py` and `tools/prepare_flexsed.py` during preparation.
-3. Run `build.ps1`: unit tests, license collection, PyInstaller, DLL import
-   validation, packaged GUI/model checks, packaged codec/ASR checks, Inno Setup.
-4. Run `tools/finalize_flexsed_release.py` to hash the installer and bundled weights.
-5. Generate the allowlisted public source export and review its manifest.
-6. Publish the reviewed source tree, notices and build instructions, and tag the
-   version. The source archive and SOURCE_MANIFEST.json can be attached to a release.
-7. Keep generated models, binaries, private material and local verification logs
-   out of Git. Individual users build for their own OS using BUILDING.md.
+## Native preview releases
 
-The GitHub CI configuration runs synthetic unit/recovery/display tests, without private recordings
-or large neural weights. Full offline-model and frozen-EXE checks run locally
-before release. CI success and a clean-machine installer test are different checks.
-Do not label a platform as tested until its native CI run actually succeeds.
+1. Update the version in `pyproject.toml`, `voxloom/__init__.py` and the installer
+   recipes. Update `CHANGELOG.md`, `docs/RELEASE_NOTES.md` and download filenames.
+2. Review model revisions and checksums. For a deliberate model update, prepare
+   pinned weights, review every changed hash, then regenerate the catalog with
+   `python tools/build_model_packs.py --write-catalog`.
+3. Run code-quality checks, tests, startup display checks and the allowlisted
+   source exporter. Update `SOURCE_MANIFEST.json` from the new export.
+4. Run the **Native release packages** workflow on the intended commit. A push
+   changing the release workflow or application version on `main` also starts it.
+5. The model job creates a **draft** release and uploads verified packs and the
+   source archive. The native matrix builds compact Windows EXE, Linux AppImage
+   and macOS ARM64 DMG packages on their respective operating systems.
+6. Each platform installs the model ZIPs through the frozen worker, runs the GUI
+   and offline codec/model checks, then verifies the final installed/mounted package.
+7. Only after all platform jobs succeed does the publisher compare uploaded hashes
+   against reports from the same commit and publish the preview release.
 
-Enable private vulnerability reporting in GitHub settings. Do not commit audio,
-transcripts, model weights, local logs, virtual environments or build directories.
-Publishing is a separate action from generating the local release files.
+The workflow uses the repository-scoped `GITHUB_TOKEN`; it needs no personal token
+or signing secrets. Its build jobs need release write permission to access the draft.
+Already published versions are not overwritten. Bump the version for a new release;
+rerunning an unpublished draft is supported.
+
+## Local builders
+
+See [BUILDING.md](BUILDING.md#compact-release-packages). The core commands are:
+
+```text
+python tools/build_portable.py --compact
+python tools/package_release.py
+python tools/build_model_packs.py
+```
+
+The last command requires prepared weights matching the committed catalog.
+The application remains offline: importing a downloaded model pack does not
+contact a server. Source tests do not replace frozen-app or installer checks.
+
+The full model-bundled Windows pipeline remains available through `build.ps1`
+and `tools/finalize_flexsed_release.py` for local builds. Its large installer may
+exceed GitHub's per-file size limit; public releases use compact apps and separate
+packs instead.
+
+Keep original third-party notices and corresponding-source directions with exact
+dependency versions. Do not label signed/notarized or untested platforms as validated.

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0
+
+- Add compact Windows EXE, Linux AppImage and Apple Silicon macOS DMG builders.
+- Distribute five optional model packs with a trusted file-hash catalog.
+- Install packs through the Models dialog with atomic activation and rollback on failure.
+- Validate native bundles, model installation and installed or mounted distributions
+  before publishing release assets with SHA-256 checksums.
+- Make English the default documentation language and retain Russian translations.
+
 ## 0.2.2
 
 - Standardize owned Python and PowerShell sources, pin formatter/analyzer versions,

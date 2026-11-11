@@ -4,9 +4,10 @@ VoxLoom application code and original icons: **GPL-3.0-only**, copyright 2026
 MatSoftAI and VoxLoom contributors. The complete license is at the repository
 root. Commercial use is allowed subject to the license. There is no warranty.
 
-The public repository contains source code and build instructions, not executable
-releases, private audio or model weights. Preparation scripts download weights
-from their publishers at build time. Those assets retain their own licenses.
+Git history contains source code and build instructions. Executables and verified
+model packs are distributed separately as GitHub Release assets. Private audio is
+not distributed. Preparation scripts fetch weights from their publishers at build
+time; those assets retain their own licenses.
 
 | Component | License / origin |
 | --- | --- |

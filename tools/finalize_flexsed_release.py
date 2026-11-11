@@ -2,9 +2,13 @@
 
 import hashlib
 import json
+import tomllib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+VERSION = tomllib.loads((ROOT / "pyproject.toml").read_text("utf-8"))["project"][
+    "version"
+]
 
 
 def read(relative):
@@ -24,7 +28,7 @@ assert {"flexsed-offline-events", "flexsed-selection-to-asr"} <= set(smoke["chec
 assert read("artifacts/qt-import-check.json") == []
 assert {"all-whisper-models-bundled", "screen-sized-startup"} <= set(smoke["checks"])
 assert "whisper-base-offline" in codecs["checks"]
-installer = ROOT / "release/VoxLoom-Studio-Setup-0.2.2-Offline-win-x64.exe"
+installer = ROOT / f"release/VoxLoom-Studio-Setup-{VERSION}-Offline-win-x64.exe"
 assert installer.is_file() and installer.stat().st_size > 1024**3
 checkpoint = ROOT / "dist-flexsed/VoxLoom/_internal/models/flexsed/flexsed_as.pt"
 assert (
@@ -42,7 +46,7 @@ for name in ("base", "small", "large-v3-turbo"):
     assert expected == digest(ROOT / "dist-flexsed/VoxLoom/_internal" / relative)
     whisper_models[name] = expected
 report = dict(
-    version="0.2.2-Offline",
+    version=VERSION + "-Offline",
     installer=installer.name,
     bytes=installer.stat().st_size,
     sha256=digest(installer),

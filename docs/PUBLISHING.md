@@ -1,41 +1,42 @@
-# Публикация исходников на GitHub
+# Publish sources on GitHub
 
-Репозиторий проекта: `suroviimustang-ai/VoxLoom-Studio`.
-В GitHub публикуется только проверенный экспорт исходников. Рабочая папка
-разработчика содержит результаты обработки, окружения, модели и сборки, поэтому
-её нельзя загружать целиком или вместе с историей родительского репозитория.
+**English** | [Русский](PUBLISHING.ru.md)
 
-## Подготовка
+Project repository: `suroviimustang-ai/VoxLoom-Studio`.
+Only publish the reviewed source export to Git. The development workspace contains
+processing results, environments, models and builds; do not upload it wholesale
+or include the history of a parent repository.
 
-1. Выполните проверки из [стандарта кода](CODING_STANDARDS.md) и
-   [процедуры выпуска](RELEASING.md).
-2. Из корня проекта создайте новый экспорт. Каталог назначения и ZIP должны
-   отсутствовать — скрипт намеренно не перезаписывает предыдущие экспорты:
+## Prepare the export
+
+1. Run the checks described in the [coding standards](CODING_STANDARDS.md) and
+   [release procedure](RELEASING.md).
+2. Create a fresh export from the project root. The destination directory and ZIP
+   must not exist; the script deliberately preserves previous exports:
 
    ```text
    python tools/export_public.py --destination public-export/VoxLoom-Studio-source
    ```
 
-3. Проверьте `SOURCE_MANIFEST.json`, состав каталога и изображения. Публикуйте
-   только код, документацию, лицензии и собственные ресурсы. Снимок интерфейса
-   в README использует синтетический сигнал и демонстрационный текст.
-4. Не добавляйте записи, расшифровки, модели, токены, диагностические логи,
-   окружения, EXE, DLL и установщики. `.gitignore` служит дополнительной защитой;
-   основная граница публикации — список файлов в `tools/export_public.py`.
+3. Review `SOURCE_MANIFEST.json`, the directory contents and images. Publish only
+   code, documentation, licenses and original assets. The README screenshot uses
+   a synthetic signal and sample text.
+4. Keep recordings, transcripts, models, tokens, diagnostic logs, environments,
+   EXE/DLL files and installers out of Git. `.gitignore` is an additional safeguard;
+   the primary publication boundary is the allowlist in `tools/export_public.py`.
 
-## Первый репозиторий
+## Create the repository
 
-Создайте публичный репозиторий `VoxLoom-Studio` в своей учётной записи GitHub.
-Лицензия, README и `.gitignore` уже входят в экспорт; при загрузке через Git
-удобнее создавать пустой репозиторий без шаблонных файлов.
+Create a public `VoxLoom-Studio` repository in your GitHub account. The export already
+includes its license, README and `.gitignore`; for a Git upload, create an empty
+repository without template files.
 
-Авторизуйтесь на GitHub обычным способом в браузере или через менеджер учётных
-данных Git. Не помещайте токены в URL, исходники, команды, скрипты или переписку.
-Подключение GitHub в приложении и вход в браузере — отдельные сеансы. Если
-подключение имеет доступ только к выбранным репозиториям, владелец должен
-добавить новый репозиторий в разрешённый список.
+Sign in to GitHub normally through the browser or Git credential manager. Do not
+put tokens in URLs, source files, commands, scripts or chat messages. A GitHub
+connector and a browser login are separate sessions. If the connector only has
+access to selected repositories, the owner must add the new repository to that list.
 
-Откройте терминал **внутри проверенного экспортированного каталога** и выполните:
+Open a terminal **inside the reviewed exported directory**, then run:
 
 ```bash
 git init -b main
@@ -47,28 +48,27 @@ git remote add origin https://github.com/suroviimustang-ai/VoxLoom-Studio.git
 git push -u origin main
 ```
 
-Для fork замените владельца в URL на свою учётную запись. Git запросит имя и
-почту автора, если они ещё не настроены; можно использовать адрес noreply,
-показанный GitHub в настройках вашей учётной записи. Не выполняйте `git init`
-в родительской папке со всеми проектами. Не используйте `--force` для первой
-публикации или для обхода конфликта с уже существующим репозиторием.
+For a fork, replace the owner in the URL with your own account. Git will ask you
+to configure an author name and email if they are missing; you can use the noreply
+address shown in your GitHub account settings. Do not initialize Git in a parent
+directory containing all your projects. Do not use `--force` to bypass a conflict
+with an existing repository.
 
-Вместо команд Git можно загрузить те же файлы через подключение GitHub:
-создать blobs/tree, commit и обновить ветку `main`. При этом сохраняется та же
-граница публикации — проверенный экспорт. Права подключения должны позволять
-запись файлов и workflow в новый репозиторий.
+You can also upload the same files through a GitHub connector by creating blobs,
+a tree and a commit, then updating `main`. The reviewed export remains the
+publication boundary. The connector needs file and workflow write access to the
+new repository.
 
-## Проверка публикации
+## Verify publication
 
-- Откройте README, убедитесь, что логотип, снимок и относительные ссылки работают.
-- Проверьте наличие `LICENSE`, сторонних лицензий и инструкций сборки.
-- Дождитесь проверок GitHub Actions: качество кода, Windows, macOS и Ubuntu.
-  До успешного нативного прогона не обозначайте платформу как проверенную.
-- Сопоставьте файлы с `SOURCE_MANIFEST.json`. Хеши манифеста относятся к байтам
-  исходного экспорта; локальный Git checkout может менять окончания строк.
-- Для дальнейшего выпуска обновите версию и описание изменений, создайте тег.
-  В GitHub Releases допустим архив исходников с манифестом; готовые приложения
-  и веса в публичную поставку этого проекта не входят.
+- Open the README and check the logo, screenshot and relative links.
+- Verify the license, third-party notices and build instructions.
+- Wait for GitHub Actions: code quality, Windows, macOS and Ubuntu. Do not mark a
+  platform as validated before its native run succeeds.
+- Compare files against `SOURCE_MANIFEST.json`. Manifest hashes describe the
+  original exported bytes; a local Git checkout may change line endings.
+- Update the version and changelog before a subsequent release, then create a tag.
+  Keep binaries and model weights in release assets, separate from source history.
 
-При обновлениях сначала просмотрите diff. Обновляйте манифест из свежего экспорта
-и загружайте изменения обычным коммитом, сохраняя историю репозитория.
+Review the diff before updates. Refresh the manifest from a new export and publish
+ordinary commits, preserving repository history.

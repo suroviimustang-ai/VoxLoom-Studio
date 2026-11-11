@@ -1,0 +1,124 @@
+name: Native release packages
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/release.yml
+      - voxloom/__init__.py
+permissions:
+  contents: read
+concurrency:
+  group: native-release-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  PYTHONUTF8: '1'
+  PIP_NO_CACHE_DIR: '1'
+  HF_HUB_DISABLE_XET: '1'
+jobs:
+  models:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Prepare isolated dependencies
+        run: |
+          python -m venv .venv-ci
+          python tools/ci_install.py
+      - name: Prepare pinned model packs
+        run: |
+          python tools/prepare_models.py
+          python tools/prepare_flexsed.py
+          python tools/build_model_packs.py
+      - name: Create draft and upload verified packs
+        run: |
+          python tools/release_assets.py init
+          python tools/release_assets.py upload-models
+      - name: Generate synthetic speech fixture
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y espeak-ng
+          python tools/prepare_speech_fixture.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-speech-fixture
+          path: artifacts/speech_fixture.wav
+          retention-days: 1
+  applications:
+    needs: models
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022, macos-15, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Linux audio and Qt libraries
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libportaudio2 libsndfile1 libegl1 libgl1 libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-image0 libxcb-render-util0 libxcb-xinerama0 libxcb-randr0 libxcb-shape0 fonts-dejavu-core
+      - name: Windows installer compiler
+        if: runner.os == 'Windows'
+        run: choco install innosetup --yes --no-progress
+      - name: Prepare isolated dependencies
+        run: |
+          python -m venv .venv-ci
+          python tools/ci_install.py
+      - name: Build compact native bundle
+        run: python tools/build_portable.py --compact
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-speech-fixture
+          path: artifacts
+      - name: Download optional model packs for validation
+        run: python tools/release_assets.py download-models
+      - name: Test model installation and frozen workers offline
+        run: python tools/verify_native_bundle.py --packs artifacts/model-packs
+      - name: Package native distribution
+        run: python tools/package_release.py
+      - name: Test installed or mounted distribution
+        run: python tools/check_package.py
+      - name: Upload verified application to draft
+        run: python tools/release_assets.py upload-app
+      - name: Upload validation reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-package-checks-${{ matrix.os }}
+          path: |
+            artifacts/doctor.json
+            artifacts/native-verification/*.json
+            artifacts/native-verification/*.png
+            artifacts/package-verification/report.json
+            artifacts/packaged-worker-flexsed/report.json
+          retention-days: 7
+  publish:
+    needs: applications
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify uploaded hashes and publish complete release
+        run: python tools/release_assets.py publish

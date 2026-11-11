@@ -14,7 +14,7 @@ def test_partial_whisper_bundle_does_not_fall_back_to_download(
             (tmp_path / name).write_bytes(b"fixture")
     monkeypatch.setattr(processing, "model_directory", lambda _: tmp_path)
     assert not processing.whisper_ready("base")
-    with pytest.raises(RuntimeError, match="Переустановите полную офлайн-версию"):
+    with pytest.raises(RuntimeError, match="Установите пакет"):
         transcribe(np.zeros((16000, 1), dtype=np.float32), 16000, "base")
 
 

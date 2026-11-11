@@ -1,34 +1,39 @@
-# Самостоятельная сборка: Windows, macOS, Ubuntu
+# Build from source: Windows, macOS and Ubuntu
 
-Репозиторий распространяется **в исходниках**, без EXE, записей и весов.
-Модели скачиваются один раз при подготовке. Собранное приложение работает офлайн.
-На каждой ОС нужно собирать нативно: PyInstaller не является кросс-компилятором.
+**English** | [Русский](BUILDING.ru.md)
 
-| Платформа | Профиль | Статус |
+The Git source tree contains code and documentation. Ready-made apps and optional
+model packs are published separately in [GitHub Releases](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases).
+Build natively on each target OS: PyInstaller is not a cross-compiler.
+The full source-build commands below prepare all models; compact builds can skip
+both model-preparation scripts and use the section below.
+
+| Platform | Profile | Status |
 | --- | --- | --- |
-| Windows 10/11 x64 | Python 3.11 x64, CPU | Локальные проверки полного EXE и нативный CI прошли |
-| macOS 15+ Apple Silicon | Python 3.11 ARM64, CPU | Нативные импорты, тесты и проверки интерфейса в CI прошли |
-| Ubuntu 24.04 x64 | Python 3.11, CPU | Нативные импорты, тесты и проверки интерфейса в CI прошли |
+| Windows 10/11 x64 | Python 3.11 x64, CPU | Local full-EXE checks and native CI passed |
+| macOS 15+ Apple Silicon | Python 3.11 ARM64, CPU | Native imports, tests and interface checks passed in CI |
+| Ubuntu 24.04 x64 | Python 3.11, CPU | Native imports, tests and interface checks passed in CI |
 
-[Прогон GitHub Actions от 11 ноября 2026 года](https://github.com/suroviimustang-ai/VoxLoom-Studio/actions/runs/42965738853):
-47 тестов и шесть конфигураций экрана на каждой ОС. CI использует Windows Server
-2022, macOS 15 ARM64 и Ubuntu 24.04 x64. Полная упаковка и проверки всех моделей
-выполнены локально на Windows; для macOS/Linux готовые bundles ещё требуют
-отдельной проверки после самостоятельной сборки.
+The [GitHub Actions run on November 11, 2026](https://github.com/suroviimustang-ai/VoxLoom-Studio/actions/runs/42965738853)
+passed 47 tests and six display configurations on each OS. CI uses Windows Server
+2022, macOS 15 ARM64 and Ubuntu 24.04 x64. Full packaging and all-model checks were
+completed locally on Windows. macOS/Linux bundles still require separate validation
+after building them.
 
-Intel Mac не входит в этот профиль: PyTorch прекратил выпуск macOS x86_64 wheels
-после ветки 2.2. Наш набор использует 2.8. Не устанавливайте ARM64 Python через
-Rosetta и не подменяйте PyTorch произвольной старой версией: это требует отдельной
-проверки всей цепочки. На Apple Silicon `python -c "import platform; print(platform.machine())"`
-должен показать `arm64`. На Windows/Linux ARM также нужна отдельная проверка.
+Intel Macs are outside this profile: PyTorch stopped providing macOS x86_64 wheels
+after the 2.2 series, while this dependency set uses 2.8. Do not run ARM64 Python
+through Rosetta or substitute an arbitrary older PyTorch version; that requires
+separate validation of the whole pipeline. On Apple Silicon,
+`python -c "import platform; print(platform.machine())"` must print `arm64`.
+Windows/Linux ARM also requires separate validation.
 
-Рекомендуется 16 ГБ RAM и 20–30 ГБ свободного места для окружения, моделей и сборки.
-На 8 ГБ запуск возможен, но тяжёлые операции выполняйте на коротких фрагментах.
-Все команды выполняются из корня скачанного/клонированного проекта.
+We recommend 16 GB of RAM and 20–30 GB of free space for dependencies, models and
+build outputs. An 8 GB system can run the app, but use short selections for demanding
+operations. Run all commands from the root of the downloaded or cloned project.
 
 ## Windows
 
-Установите Python 3.11 x64 с python.org и Git. В PowerShell:
+Install Python 3.11 x64 from python.org and Git. In PowerShell:
 
 ```powershell
 py -3.11 -m venv .venv311
@@ -40,24 +45,24 @@ py -3.11 -m venv .venv311
 .venv311/Scripts/python main.py
 ```
 
-Сборка переносной папки без Inno Setup:
+Build a portable directory without Inno Setup:
 
 ```powershell
 .venv311/Scripts/python tools/build_portable.py
 ```
 
-Результат: `dist-native/VoxLoom/VoxLoom.exe`; сохраняйте **всю папку**.
-Чтобы собрать личный установщик, установите Inno Setup 6 и английский голос Windows
-SAPI для тестового аудио, затем `./build.ps1`. Установщик и веса не коммитятся в Git.
+Output: `dist-native/VoxLoom/VoxLoom.exe`; keep the **entire directory**.
+To build your own installer, install Inno Setup 6 and an English Windows SAPI voice
+for the speech fixture, then run `./build.ps1`. Do not commit the installer or weights.
 
 ## macOS 15+ (Apple Silicon)
 
-В этом профиле требуется macOS 15 или новее: готовый пакет RNNoise 0.4.3 для Mac
-собран с минимальной версией macOS 15. Поддержка более старых систем требует
-отдельной сборки и проверки этой зависимости.
+This profile requires macOS 15 or later: the RNNoise 0.4.3 wheel for Mac targets
+macOS 15 as its minimum version. Supporting older systems requires a separate build
+and validation of that dependency.
 
-Установите Python 3.11 ARM64/universal2 с python.org либо через uv. При необходимости
-установите инструменты разработчика командой `xcode-select --install`.
+Install Python 3.11 ARM64/universal2 from python.org or through uv. If needed,
+install developer tools with `xcode-select --install`.
 
 ```bash
 python3.11 -m venv .venv311
@@ -71,14 +76,14 @@ python main.py
 python tools/build_portable.py
 ```
 
-Результат: `dist-native/VoxLoom.app`. CUDA не используется; Whisper выбирает
-поддерживаемый CPU-тип вычислений. Apple Developer ID и notarization в этот
-локальный процесс сборки не входят. Не обещается переносимость приложения на
-более старую macOS, чем поддерживают использованные Python/Qt/wheels.
+Output: `dist-native/VoxLoom.app`. CUDA is not used; Whisper selects a supported CPU
+compute type. Apple Developer ID signing and notarization are not part of this local
+build procedure. The resulting app is not guaranteed to run on macOS versions older
+than those supported by the Python, Qt and wheels used to build it.
 
 ## Ubuntu 24.04 (x64)
 
-Установите системные библиотеки и pipx:
+Install the system libraries and pipx:
 
 ```bash
 sudo apt update
@@ -87,7 +92,7 @@ pipx install uv
 pipx ensurepath
 ```
 
-Откройте новый терминал, затем:
+Open a new terminal, then run:
 
 ```bash
 uv python install 3.11
@@ -102,11 +107,11 @@ python main.py
 python tools/build_portable.py
 ```
 
-Результат: `dist-native/VoxLoom/VoxLoom` и соседние библиотеки. Запуск:
-`./dist-native/VoxLoom/VoxLoom`. Сборка использует glibc текущей ОС; для поддержки
-более старой Ubuntu нужно собирать и проверять на ней, а не копировать новый bundle.
+Output: `dist-native/VoxLoom/VoxLoom` and its adjacent libraries. Launch it with
+`./dist-native/VoxLoom/VoxLoom`. The build uses the host OS's glibc; supporting an
+older Ubuntu release requires building and testing on that release.
 
-## Проверки и диагностика
+## Checks and troubleshooting
 
 ```text
 python -m pytest -q
@@ -114,34 +119,70 @@ python tools/check_startup.py
 python tools/doctor.py --models
 ```
 
-`doctor` проверяет импорты Qt, кодеков, RNNoise, Torch/DeepFilterNet и CLAP в
-отдельных процессах, затем комплектность весов. Это не оценка качества модели.
-`check_startup` проверяет границы окна на моделируемых экранах. Сетевые флаги
-`HF_HUB_OFFLINE=1` и `TRANSFORMERS_OFFLINE=1` подходят для проверок после скачивания.
-Снимите их перед первоначальной подготовкой весов.
+`doctor` checks imports for Qt, codecs, RNNoise, Torch/DeepFilterNet and CLAP in
+separate processes, then checks model completeness. It does not evaluate model
+quality. `check_startup` checks window bounds on simulated displays. The environment
+variables `HF_HUB_OFFLINE=1` and `TRANSFORMERS_OFFLINE=1` are suitable for checks
+after model preparation; unset them before the initial downloads.
 
-- **Windows QtWidgets/DLL:** используйте чистое окружение одной разрядности;
-  не копируйте случайные Qt/ICU DLL в папку программы. Сборщик сохраняет проверку импортов.
-- **Ubuntu xcb:** установите библиотеки из команды выше; для сеанса XWayland можно
-  проверить `QT_QPA_PLATFORM=xcb python main.py`. `offscreen` нужен только для тестов.
-- **Нет устройства вывода:** проверьте устройство по умолчанию и доступность звука
-  в ОС. Не запускайте Linux GUI через `sudo`.
-- **Нет wheel для DeepFilterLib/RNNoise:** сначала проверьте Python 3.11 и архитектуру.
-  Компиляция Rust/C зависимостей вручную — отдельный сценарий; не смешивайте чужие DLL/dylib.
-- **Не хватает памяти:** используйте Whisper base/small и более короткое выделение.
-- **Отсутствуют веса:** повторите оба скрипта подготовки; `model-sources.json`
-  фиксирует ревизии Whisper и контрольные суммы. Не скачивайте случайные `.pth`.
+- **Windows QtWidgets/DLL errors:** use a clean environment with a consistent
+  architecture. Do not copy arbitrary Qt/ICU DLLs into the application directory.
+  The packaging pipeline includes native import validation.
+- **Ubuntu xcb errors:** install the libraries listed above. For an XWayland session,
+  try `QT_QPA_PLATFORM=xcb python main.py`. `offscreen` is intended for tests.
+- **No output device:** check the default audio device and audio availability in
+  your OS. Do not launch the Linux GUI with `sudo`.
+- **No DeepFilterLib/RNNoise wheel:** check Python 3.11 and your architecture first.
+  Manually compiling Rust/C dependencies is a separate procedure; do not mix
+  unrelated DLLs or dylibs.
+- **Out of memory:** choose Whisper base/small and a shorter selection.
+- **Missing weights:** rerun both preparation scripts. `model-sources.json` pins
+  Whisper revisions and checksums. Do not download arbitrary `.pth` files.
 
-Windows lock `requirements-lock.txt` нельзя использовать как универсальный lock
-на macOS/Linux: в нём Windows-пакеты и CPU-wheel суффиксы. Для других ОС используется
-`install_dependencies.py`; после успешной проверки сохраните свой `pip freeze`.
+The Windows `requirements-lock.txt` is not a universal lock for macOS/Linux:
+it contains Windows packages and CPU-wheel suffixes. Use `install_dependencies.py`
+on other platforms and save your own `pip freeze` after successful validation.
 
-GitHub Actions содержит матрицу Windows, macOS ARM64 и Ubuntu.
-Актуальный результат смотрите в разделе Actions репозитория; первый успешный
-нативный прогон указан выше. CI не скачивает большие веса и не проверяет качество
-распознавания на реальной речи.
+GitHub Actions includes Windows, macOS ARM64 and Ubuntu jobs. Check the repository's
+Actions page for current results; the first successful native run is linked above.
+CI does not download large weights or evaluate transcription accuracy on real speech.
 
-Источники: [PyInstaller: нативная сборка](https://pyinstaller.org/en/stable/operating-mode.html),
-[управление Python через uv](https://docs.astral.sh/uv/guides/install-python/),
+Sources: [PyInstaller native builds](https://pyinstaller.org/en/stable/operating-mode.html),
+[Python management with uv](https://docs.astral.sh/uv/guides/install-python/),
 [Qt Linux dependencies](https://doc.qt.io/qt-6/linux-requirements.html),
-[прекращение Intel Mac wheels PyTorch](https://dev-discuss.pytorch.org/t/pytorch-macos-x86-builds-deprecation-starting-january-2024/1690).
+[PyTorch Intel Mac wheel deprecation](https://dev-discuss.pytorch.org/t/pytorch-macos-x86-builds-deprecation-starting-january-2024/1690).
+
+## Compact release packages
+
+After installing dependencies in the native Python 3.11 environment:
+
+```text
+python tools/build_portable.py --compact
+python tools/package_release.py
+```
+
+No model download is needed for a compact app build. The reviewed catalog in
+`assets/model-catalog.json` is bundled with the app to verify optional ZIP packs.
+Windows packaging requires Inno Setup 6 or later. Linux packaging downloads
+appimagetool and its runtime from pinned releases and verifies their SHA-256 hashes
+in `packaging/tool-sources.json`. macOS packaging uses the system `hdiutil`.
+
+Outputs under `release-native/` are the Windows x64 `.exe`, Linux x86_64 `.AppImage`
+or macOS ARM64 `.dmg`. Windows is unsigned; macOS is not Developer ID signed or
+notarized. Packaging does not bypass OS security protections.
+
+To create optional model packs, prepare the pinned models first, then run:
+
+```text
+python tools/build_model_packs.py
+```
+
+This checks every file against the committed catalog before writing the five ZIPs.
+`--write-catalog` is a maintainer operation for reviewed upstream model updates,
+not a workaround for a checksum mismatch. Users import packs using the
+[download guide](DOWNLOADS.md). Installed model revisions remain available if a
+replacement fails; previous revisions are retained on disk.
+
+The `Native release packages` workflow builds on all three operating systems,
+tests the frozen app and each installed/mounted distribution, and publishes the
+draft release only when every platform passes and uploaded hashes match.

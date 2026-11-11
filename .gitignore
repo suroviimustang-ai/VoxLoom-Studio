@@ -34,3 +34,4 @@ dist-native/
 build-native/
 .tooling/
 .ruff_cache/
+release-native/

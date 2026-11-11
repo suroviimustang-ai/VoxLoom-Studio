@@ -46,7 +46,8 @@ try {
     if ($LASTEXITCODE -ne 0) {
         throw 'Installer build failed'
     }
-    Get-FileHash release/VoxLoom-Studio-Setup-0.2.2-Offline-win-x64.exe -Algorithm SHA256 | Format-List
+    $taskVersion = & $Python -c 'from voxloom import __version__; print(__version__)'
+    Get-FileHash -LiteralPath "release/VoxLoom-Studio-Setup-$taskVersion-Offline-win-x64.exe" -Algorithm SHA256 | Format-List
 }
 finally {
     Pop-Location

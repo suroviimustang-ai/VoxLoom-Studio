@@ -1,4 +1,4 @@
-#define AppVersion "0.2.2"
+#define AppVersion "0.3.0"
 [Setup]
 AppId={{E7154787-0A29-47F9-AC3F-031CA0F2C83A}
 AppName=VoxLoom Studio
@@ -10,7 +10,7 @@ PrivilegesRequired=lowest
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 OutputDir=..\release
-OutputBaseFilename=VoxLoom-Studio-Setup-0.2.2-Offline-win-x64
+OutputBaseFilename=VoxLoom-Studio-Setup-{#AppVersion}-Offline-win-x64
 SetupIconFile=..\assets\voxloom.ico
 UninstallDisplayIcon={app}\VoxLoom.exe
 Compression=lzma2/fast

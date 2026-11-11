@@ -127,7 +127,7 @@ def transcribe(
 
     if not whisper_ready(model):
         raise RuntimeError(
-            f"Комплект Whisper {model} отсутствует или повреждён. Переустановите полную офлайн-версию VoxLoom."
+            f"Комплект Whisper {model} отсутствует или повреждён. Установите пакет через «Модели → Установить пакет»."
         )
     from ctranslate2 import get_supported_compute_types
     from faster_whisper import WhisperModel

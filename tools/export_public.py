@@ -15,8 +15,10 @@ TOP = (
     "PSScriptAnalyzerSettings.psd1",
     "requirements-dev.txt",
     "README.md",
+    "README.ru.md",
     "LICENSE",
     "THIRD_PARTY_NOTICES.md",
+    "THIRD_PARTY_NOTICES.ru.md",
     "CHANGELOG.md",
     "CONTRIBUTING.md",
     "SECURITY.md",
@@ -51,14 +53,26 @@ TOOLS = (
     "ci_install.py",
     "doctor.py",
     "build_portable.py",
+    "build_model_packs.py",
+    "package_release.py",
+    "prepare_speech_fixture.py",
+    "verify_native_bundle.py",
+    "check_package.py",
+    "release_assets.py",
 )
 DOCS = (
     "ARCHITECTURE.md",
     "RELEASING.md",
     "LICENSES.md",
     "BUILDING.md",
+    "BUILDING.ru.md",
     "CODING_STANDARDS.md",
+    "CODING_STANDARDS.ru.md",
     "PUBLISHING.md",
+    "PUBLISHING.ru.md",
+    "DOWNLOADS.md",
+    "DOWNLOADS.ru.md",
+    "RELEASE_NOTES.md",
 )
 
 
@@ -73,6 +87,10 @@ def export(destination):
     paths += [ROOT / "tools" / name for name in TOOLS]
     paths += [ROOT / "docs" / name for name in DOCS]
     paths += [ROOT / "packaging/VoxLoom-FlexSED.iss"]
+    paths += [
+        ROOT / "packaging/VoxLoom-Compact.iss",
+        ROOT / "packaging/tool-sources.json",
+    ]
     for folder in ("voxloom", "tests", "assets", "licenses", ".github"):
         paths += [
             p

@@ -1173,16 +1173,16 @@ class MainWindow(W.QMainWindow):
 
     def models(self):
         dialog = W.QDialog(self)
-        dialog.setWindowTitle("Встроенные модели")
+        dialog.setWindowTitle("Модели VoxLoom")
         dialog.resize(570, 370)
         layout = W.QVBoxLayout(dialog)
-        layout.addWidget(label("ПОЛНЫЙ ОФЛАЙН-КОМПЛЕКТ", "section"))
+        layout.addWidget(label("МОДЕЛИ ДЛЯ РАБОТЫ ОФЛАЙН", "section"))
         layout.addWidget(label("Silero VAD — поиск речи\nRNNoise — шумоподавление"))
         installed = []
         for name in WHISPER_MODELS:
             present = whisper_ready(name)
             installed.append(
-                f"Whisper {name}: {'готова' if present else 'комплект повреждён'}"
+                f"Whisper {name}: {'готова' if present else 'не установлена'}"
             )
         installed.append(
             "DeepFilterNet3: "
@@ -1199,11 +1199,14 @@ class MainWindow(W.QMainWindow):
         )
         layout.addWidget(label("\n".join(installed)))
         description = label(
-            "Все перечисленные модели входят в установщик и работают без интернета. Base — быстрый черновик, small — баланс, large-v3-turbo — более мощное распознавание. Spectral Gate и DSP не требуют весов. При повреждении файлов переустановите полную версию.",
+            "В компактной версии модели устанавливаются отдельно из ZIP-пакетов GitHub Releases. После установки интернет не требуется. Base — быстрый черновик, small — баланс, turbo — более мощное распознавание. Spectral Gate, RNNoise и Silero VAD доступны сразу.",
             "muted",
         )
         description.setWordWrap(True)
         layout.addWidget(description)
+        install = self.button("Установить пакет…", lambda: self.install_models(dialog))
+        install.setEnabled(self.job is None)
+        layout.addWidget(install)
         layout.addWidget(self.button("Закрыть", dialog.accept))
         license_note = label(
             "VoxLoom Studio — GPLv3. Разрешены использование, изменение и распространение по условиям лицензии. Без гарантий. Лицензии компонентов — в папке licenses.",
@@ -1213,6 +1216,25 @@ class MainWindow(W.QMainWindow):
         layout.addWidget(license_note)
         dialog.resize(dialog.size().boundedTo(self.screen().availableGeometry().size()))
         dialog.exec()
+
+    def install_models(self, dialog=None):
+        if self.job:
+            return
+        paths, _ = W.QFileDialog.getOpenFileNames(
+            self,
+            "Выберите пакеты моделей VoxLoom из GitHub Releases",
+            "",
+            "VoxLoom model packs (*.zip)",
+        )
+        if not paths:
+            return
+        if dialog is not None:
+            dialog.accept()
+        self.run_job(
+            {"action": "install_models", "paths": paths},
+            "Проверка и установка моделей…",
+            lambda *_: None,
+        )
 
     def dragEnterEvent(self, event):
         if (

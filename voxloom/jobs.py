@@ -24,6 +24,7 @@ class Job(C.QObject):
         self.process.readyReadStandardError.connect(self._read_stderr)
         self.process.readyReadStandardOutput.connect(self.process.readAllStandardOutput)
         self.temp = None
+        self.model_temp = None
         self.cancelled = False
         self.settled = False
 
@@ -31,6 +32,15 @@ class Job(C.QObject):
         request = dict(request)
         self.action = request.get("action")
         self.temp = tempfile.TemporaryDirectory(prefix="voxloom-")
+        if self.action == "install_models":
+            from .processing import writable_models
+
+            models = writable_models()
+            models.mkdir(parents=True, exist_ok=True)
+            self.model_temp = tempfile.TemporaryDirectory(
+                prefix=".install-", dir=models
+            )
+            request["staging_root"] = self.model_temp.name
         root = Path(self.temp.name)
         if data is not None:
             np.save(root / "input.npy", data, allow_pickle=False)
@@ -107,11 +117,12 @@ class Job(C.QObject):
         self._settle(result, output)
 
     def cleanup(self):
-        if self.temp:
-            try:
-                self.temp.cleanup()
-            except OSError:
-                LOG.exception("Temporary files could not be removed")
+        for temporary in (self.temp, self.model_temp):
+            if temporary:
+                try:
+                    temporary.cleanup()
+                except OSError:
+                    LOG.exception("Temporary files could not be removed")
 
     def _settle(self, result, output):
         if self.settled:

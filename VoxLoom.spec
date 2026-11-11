@@ -1,18 +1,26 @@
+import os
 import sys
+import tomllib
 from importlib.metadata import distribution
 from pathlib import Path
 
 from PyInstaller.utils.hooks import collect_all, collect_data_files, copy_metadata
 
 root = Path(SPECPATH).resolve()
-required_assets = [
-    root / "models/DeepFilterNet3/config.ini",
-    root / "assets/voxloom.ico",
-    root / "models/flexsed/manifest.json",
-    root / "models/flexsed/flexsed_as.pt",
-    root / "models/flexsed/clap-text/model.safetensors",
+app_version = tomllib.loads((root / "pyproject.toml").read_text("utf-8"))["project"][
+    "version"
 ]
-for model in ("base", "small", "large-v3-turbo"):
+bundle_models = os.environ.get("VOXLOOM_BUNDLE_MODELS", "1") != "0"
+required_assets = [root / "assets/voxloom.ico", root / "assets/model-catalog.json"]
+if bundle_models:
+    required_assets += [
+        root / "models/DeepFilterNet3/config.ini",
+        root / "assets/voxloom.ico",
+        root / "models/flexsed/manifest.json",
+        root / "models/flexsed/flexsed_as.pt",
+        root / "models/flexsed/clap-text/model.safetensors",
+    ]
+for model in ("base", "small", "large-v3-turbo") if bundle_models else ():
     vocabulary = "vocabulary.json" if model == "large-v3-turbo" else "vocabulary.txt"
     required_assets.extend(
         root / "models" / f"whisper-{model}" / filename
@@ -24,6 +32,7 @@ for required in required_assets:
 datas = [
     (str(root / "assets"), "assets"),
     (str(root / "README.md"), "."),
+    (str(root / "README.ru.md"), "."),
     (str(root / "THIRD_PARTY_NOTICES.md"), "."),
     (str(root / "LICENSE"), "."),
     (str(root / "docs/ARCHITECTURE.md"), "docs"),
@@ -39,6 +48,13 @@ rnnoise_name = {
 binaries = [
     (str(distribution("pyrnnoise").locate_file("pyrnnoise/" + rnnoise_name)), "native")
 ]
+if sys.platform == "linux":
+    portaudio = Path("/usr/lib/x86_64-linux-gnu/libportaudio.so.2")
+    if not portaudio.is_file():
+        raise RuntimeError(
+            "Install libportaudio2 before building the Linux application"
+        )
+    binaries.append((str(portaudio.resolve()), "."))
 hiddenimports = [
     "df.deepfilternet3",
     "transformers.models.clap.modeling_clap",
@@ -61,7 +77,7 @@ for name in (
     "einops",
 ):
     datas += copy_metadata(name)
-for path in (root / "models").rglob("*"):
+for path in (root / "models").rglob("*") if bundle_models else ():
     if path.is_file() and ".cache" not in path.parts and path.suffix != ".log":
         datas.append(
             (str(path), str(Path("models") / path.parent.relative_to(root / "models")))
@@ -132,6 +148,7 @@ if sys.platform == "darwin":
         coll,
         name="VoxLoom.app",
         bundle_identifier="org.matsoftai.voxloom",
+        version=app_version,
         icon=str(root / "assets/voxloom.icns"),
         info_plist={"NSHighResolutionCapable": True},
     )

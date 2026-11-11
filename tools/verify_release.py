@@ -23,7 +23,11 @@ destination = (
 )
 destination.mkdir(parents=True, exist_ok=True)
 environment = dict(os.environ, HF_HUB_OFFLINE="1", HF_HUB_DISABLE_TELEMETRY="1")
-environment["PATH"] = str(Path(os.environ.get("SystemRoot", "C:/Windows")) / "System32")
+environment["PATH"] = (
+    str(Path(os.environ.get("SystemRoot", "C:/Windows")) / "System32")
+    if sys.platform == "win32"
+    else os.defpath
+)
 for name in ["PYTHONHOME", "PYTHONPATH", "VIRTUAL_ENV", "CONDA_PREFIX"]:
     environment.pop(name, None)
 checks = []

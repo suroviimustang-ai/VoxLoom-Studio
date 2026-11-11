@@ -21,7 +21,21 @@ def execute(request_path: str) -> int:
         from .speech import detect, transcribe
 
         action = request["action"]
-        if action == "load":
+        if action == "install_models":
+            from .modelpacks import install_pack
+
+            paths = request.get("paths")
+            if not isinstance(paths, list) or not 1 <= len(paths) <= 5:
+                raise ValueError("Выберите от одного до пяти пакетов моделей.")
+            staging = request.get("staging_root")
+            installed = [
+                install_pack(
+                    Path(path), staging_root=Path(staging) if staging else None
+                )
+                for path in paths
+            ]
+            result = {"message": "Установлены модели: " + ", ".join(installed)}
+        elif action == "load":
             data, rate = load_audio(request["path"])
             np.save(root / "output.npy", data, allow_pickle=False)
             result = {"rate": rate}

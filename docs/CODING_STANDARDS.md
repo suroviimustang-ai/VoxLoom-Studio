@@ -1,32 +1,33 @@
-# Стандарт кода VoxLoom
+# VoxLoom coding standards
 
-Правила применяются к собственному коду приложения, тестам, скриптам анализа
-и сборки. Папки с результатами, сборками, окружениями и весами исключены.
-`voxloom/_vendor` сохраняется как закреплённая копия стороннего кода: обновляйте
-его отдельно с проверкой происхождения и лицензий, а не массовым форматированием.
+**English** | [Русский](CODING_STANDARDS.ru.md)
+
+These rules apply to application-owned code, tests, analysis scripts and build tools.
+Generated results, builds, environments and weights are excluded.
+`voxloom/_vendor` remains a pinned copy of third-party code: update it separately,
+reviewing provenance and licenses, rather than applying bulk formatting.
 
 ## Python 3.11
 
-- PEP 8 и форматирование Ruff: четыре пробела, двойные кавычки, LF, целевая
-  длина строки 88 символов (совместимая с Black договорённость проекта).
-  Не разбивайте вручную пользовательские строки и URL только ради лимита.
-- Один оператор на строку; импорты разделены на стандартную библиотеку,
-  сторонние пакеты и модули проекта. Неиспользуемые импорты удаляются.
-- Ruff проверяет E4/E7/E9, Pyflakes (`F`), порядок импортов (`I`) и синтаксис
-  для целевой версии Python (`UP`). Небезопасные автоматические исправления
-  не применяются.
-- Имена функций и переменных — `snake_case`, классов — `PascalCase`, констант —
-  `UPPER_SNAKE_CASE`. Переопределения Qt (`paintEvent`, `resizeEvent`, `setText`)
-  сохраняют имена API. Новые публичные интерфейсы должны иметь понятные
-  аннотации типов и описание назначения.
-- Настройка окружения должна предшествовать импорту нативных библиотек.
-  Отложенный импорт ASR после тяжёлой DSP-обработки в двух локальных утилитах
-  помечен точечным `noqa: E402` с причиной. В `VoxLoom.spec` допустимы глобальные
-  имена, которые предоставляет PyInstaller.
-- Не выполняйте сетевые запросы и тяжёлую обработку в GUI-потоке; сохраняйте
-  отмену задач и неизменность исходной дорожки.
+- Use PEP 8 and Ruff formatting: four spaces, double quotes, LF and an 88-character
+  target line length, following the project's Black-compatible convention.
+  Do not manually split user-facing strings or URLs solely to meet that target.
+- Use one statement per line. Group imports into the standard library, third-party
+  packages and project modules. Remove unused imports.
+- Ruff checks E4/E7/E9, Pyflakes (`F`), import order (`I`) and target-version
+  syntax (`UP`). Do not apply unsafe automatic fixes.
+- Use `snake_case` for functions and variables, `PascalCase` for classes, and
+  `UPPER_SNAKE_CASE` for constants. Qt overrides such as `paintEvent`,
+  `resizeEvent` and `setText` retain their API names. New public interfaces
+  should have clear type annotations and purpose descriptions.
+- Configure the environment before importing native libraries. Deferred ASR
+  imports after expensive DSP operations in two local utilities have targeted
+  `noqa: E402` comments explaining why. PyInstaller-provided globals are allowed
+  in `VoxLoom.spec`.
+- Keep network requests and heavy processing out of the GUI thread. Preserve
+  cancellation and the immutable original track.
 
-В активном окружении проекта:
+In the active project environment:
 
 ```text
 python -m pip install -r requirements-dev.txt
@@ -34,16 +35,16 @@ python tools/check_style.py
 python tools/check_style.py --fix
 ```
 
-Версия Ruff закреплена отдельно от зависимостей приложения. После автоматического
-исправления всегда просматривайте изменения и запускайте необходимые тесты.
+The Ruff version is pinned separately from application dependencies. Always review
+automatic changes and run the relevant tests.
 
 ## PowerShell
 
-Используются PSScriptAnalyzer 1.24.0 и `PSScriptAnalyzerSettings.psd1`: четыре
-пробела, согласованные скобки, пробелы, регистр команд и стандартные проверки
-ошибок. Файлы `.ps1`/`.psd1` имеют CRLF и UTF-8 BOM для совместимости с Windows
-PowerShell 5.1. Служебные переменные имеют префикс `task`, пути передаются через
-`-LiteralPath`, код возврата внешних программ проверяется явно.
+Use PSScriptAnalyzer 1.24.0 and `PSScriptAnalyzerSettings.psd1`: four spaces,
+consistent braces, spacing and command casing, and the standard error checks.
+Use CRLF and UTF-8 BOM for `.ps1`/`.psd1` files to support Windows PowerShell 5.1.
+Prefix task-specific variables with `task`, pass paths through `-LiteralPath`,
+and explicitly check external program exit codes.
 
 ```powershell
 Save-Module -Name PSScriptAnalyzer -RequiredVersion 1.24.0 -Path .tooling -Repository PSGallery -Force
@@ -51,24 +52,24 @@ Save-Module -Name PSScriptAnalyzer -RequiredVersion 1.24.0 -Path .tooling -Repos
 ./tools/check_powershell.ps1 -Fix
 ```
 
-Проверка не скачивает модуль автоматически: она использует локальную копию
-в `.tooling` или уже установленную версию 1.24.0.
+The check does not download the module automatically. It uses the local copy in
+`.tooling` or an installed version 1.24.0.
 
-## Конфигурация и проверка изменений
+## Configuration and change validation
 
-`.editorconfig` задаёт кодировку, отступы и окончания строк: YAML/JSON — два
-пробела, Python/PowerShell/TOML — четыре. `.gitattributes` закрепляет окончания
-строк в Git. Секция `.iss` использует синтаксис Inno Setup: имена директив
-и порядок секций сохраняются, корректность проверяется компилятором сборки.
-Лицензионные тексты и сторонние ресурсы не переформатируются.
+`.editorconfig` defines encoding, indentation and line endings: two spaces for
+YAML/JSON and four for Python/PowerShell/TOML. `.gitattributes` fixes Git line
+endings. Inno Setup `.iss` files retain their directive names and section order;
+the installer compiler validates their syntax. Do not reformat license texts or
+third-party resources.
 
 ```text
 python -m pytest -q
 python tools/check_startup.py
 ```
 
-GitHub Actions проверяет Python и PowerShell отдельной задачей `code-quality`.
-Изменения упаковки требуют проверки собранного приложения через `build.ps1`.
+GitHub Actions checks Python and PowerShell in the separate `code-quality` job.
+Packaging changes require packaged-application validation through `build.ps1`.
 
-Источники правил: [Ruff](https://docs.astral.sh/ruff/configuration/),
+References: [Ruff](https://docs.astral.sh/ruff/configuration/),
 [PSScriptAnalyzer](https://learn.microsoft.com/en-us/powershell/utility-modules/psscriptanalyzer/using-scriptanalyzer).

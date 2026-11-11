@@ -4,18 +4,19 @@
 
 <h1 align="center">VoxLoom Studio</h1>
 
+<p align="center"><strong>English</strong> | <a href="README.ru.md">Русский</a></p>
+
 <p align="center">
-  Очистка аудио, поиск речи и расшифровка фрагментов — локально на вашем компьютере.
-  <br>
-  Offline audio restoration, speech detection and transcription.
+  Restore audio, find speech and transcribe selected passages — on your own computer.
 </p>
 
 <p align="center">
-  <a href="docs/BUILDING.md">Собрать приложение</a> ·
-  <a href="#возможности">Возможности</a> ·
-  <a href="docs/ARCHITECTURE.md">Архитектура</a> ·
-  <a href="CONTRIBUTING.md">Участие</a> ·
-  <a href="https://github.com/suroviimustang-ai/VoxLoom-Studio/issues">Сообщить об ошибке</a>
+  <a href="docs/BUILDING.md">Build the app</a> ·
+  <a href="docs/DOWNLOADS.md">Download &amp; install</a> ·
+  <a href="#features">Features</a> ·
+  <a href="docs/ARCHITECTURE.md">Architecture</a> ·
+  <a href="CONTRIBUTING.md">Contribute</a> ·
+  <a href="https://github.com/suroviimustang-ai/VoxLoom-Studio/issues">Report a bug</a>
 </p>
 
 <p align="center">
@@ -24,72 +25,87 @@
   <a href="docs/BUILDING.md"><img src="https://img.shields.io/badge/Python-3.11-blue" alt="Python 3.11"></a>
 </p>
 
-![Интерфейс VoxLoom: исходная и обработанная дорожки, метки речи и текст](assets/screenshots/workspace.png)
+![VoxLoom workspace: original and processed tracks, speech regions and transcript](assets/screenshots/workspace.png)
 
-*VoxLoom 0.2.2, рабочая область 1366×768. Синтетическая демонстрационная дорожка
-и пример текста показывают интерфейс, а не качество распознавания.*
+*VoxLoom 0.2.2 at 1366×768. The synthetic waveform and sample text illustrate the
+interface, not recognition accuracy. The desktop interface is currently in Russian;
+the language links above switch the documentation.*
 
-**Публичная поставка — исходники и инструкции.** Готовые EXE и веса в репозиторий
-не включаются. Каждый пользователь собирает приложение для своей ОС; модели
-подготавливаются один раз во время сборки. Готовое приложение работает офлайн.
+**Compact apps and separate model packs are distributed through
+[GitHub Releases](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases).**
+Choose a Windows EXE installer, Linux AppImage or Apple Silicon macOS DMG, then
+install the models you need through **Модели → Установить пакет** (Models → Install
+pack). See the [download guide](docs/DOWNLOADS.md). Source history contains code and
+build instructions; binaries and weights are release assets. After model setup,
+audio processing works offline.
 
-| Платформа | Самостоятельная сборка | Проверка |
+| Platform | Build from source | Validation |
 | --- | --- | --- |
-| Windows 10/11 x64 | [Инструкция](docs/BUILDING.md#windows) | Локальная проверка упакованного приложения и CI прошли |
-| macOS 15+ Apple Silicon | [Инструкция](docs/BUILDING.md#macos-15-apple-silicon) | Нативные тесты и проверки интерфейса в CI прошли |
-| Ubuntu 24.04 x64 | [Инструкция](docs/BUILDING.md#ubuntu-2404-x64) | Нативные тесты и проверки интерфейса в CI прошли |
+| Windows 10/11 x64 | [Instructions](docs/BUILDING.md#windows) | Local packaged-app checks and native CI passed |
+| macOS 15+ Apple Silicon | [Instructions](docs/BUILDING.md#macos-15-apple-silicon) | Native tests and interface checks passed in CI |
+| Ubuntu 24.04 x64 | [Instructions](docs/BUILDING.md#ubuntu-2404-x64) | Native tests and interface checks passed in CI |
 
-Актуальные результаты удалённых проверок доступны в
-[GitHub Actions](https://github.com/suroviimustang-ai/VoxLoom-Studio/actions).
-Проверка CI не заменяет проверку установщика на чистой системе.
-В [первом успешном прогоне 11 ноября 2026 года](https://github.com/suroviimustang-ai/VoxLoom-Studio/actions/runs/42965738853)
-на каждой ОС выполнены 47 тестов и проверки шести конфигураций экрана.
+See [GitHub Actions](https://github.com/suroviimustang-ai/VoxLoom-Studio/actions)
+for current results. CI does not replace installer testing on a clean system.
+The [first successful run on November 11, 2026](https://github.com/suroviimustang-ai/VoxLoom-Studio/actions/runs/42965738853)
+passed 47 tests and six simulated display configurations on each operating system.
 
-## Возможности
+## Features
 
-- WAV, FLAC, MP3, OGG, AAC/M4A и другие форматы через libsndfile/PyAV.
-- Неизменяемый исходник A, отдельный результат B, выделение и прослушивание.
-- Spectral Gate, RNNoise, DeepFilterNet3, фильтрация гула, LUFS/пиковая нормировка.
-- Silero VAD и FlexSED + CLAP: цветные метки речи и звуковых событий.
-- Whisper base, small и large-v3-turbo: русский и другие языки, экспорт TXT/SRT.
-- Экспорт WAV/FLAC/OGG и меток JSON; отмена фоновой обработки.
-- Заставка при запуске и окно в рабочую область текущего монитора с учётом DPI.
-- Компактная компоновка без прокрутки всего окна: нормировка на вкладке «Уровень»,
-  метки и текст на узком экране переключаются вкладками. Проверяются рабочие области
-  от 800×600 логических пикселей; текст и длинные списки прокручиваются внутри панели.
+- Open WAV, FLAC, MP3, OGG, AAC/M4A and other formats through libsndfile/PyAV.
+- Keep the original track A intact, process a separate track B, and audition selections.
+- Restore speech with Spectral Gate, RNNoise and DeepFilterNet3; filter hum and
+  normalize loudness using LUFS or sample peaks.
+- Find speech with Silero VAD and sound events with FlexSED + CLAP, with colored regions.
+- Transcribe Russian and other languages with Whisper base, small and large-v3-turbo;
+  export TXT and SRT.
+- Export WAV/FLAC/OGG audio and JSON regions; cancel background processing.
+- Start with a splash screen and fit the window to the current monitor's work area,
+  accounting for display scaling.
+- Use a compact layout without scrolling the whole window: normalization has its
+  own tab, and narrow windows switch between regions and text with tabs. Display
+  checks cover work areas down to 800×600 logical pixels; long text and lists scroll
+  within their own panels.
 
-Полный установщик содержит все перечисленные веса, Python, Qt и аудиокодеки.
-После установки интернет, API-ключи, Python и CUDA не нужны. Аудио не отправляется
-в облако. При запуске из исходников модели сначала подготавливаются отдельно.
+Compact packages include Python, Qt, audio codecs, RNNoise and Silero VAD.
+Spectral Gate and DSP also work immediately. Whisper, DeepFilterNet3 and FlexSED
+use optional verified model packs. Once installed, the selected models work without
+internet, API keys, a separate Python installation or CUDA. Audio stays local.
+The full model-bundled build remains available for users building from source.
 
-## Работа
+## Workflow
 
-1. Откройте запись кнопкой или перетащите файл.
-2. Выберите A/B: это вход прослушивания и последующей обработки.
-3. «Очистка»: выберите метод и силу. Профиль шума берётся из паузы без речи.
-4. «Речь» → «Найти речь» или «События» → запрос на английском, например
-   `Speech; Conversation; Whispering` (работает и с русской записью).
-5. Выберите метку или выделите участок мышью, прослушайте и распознайте его.
-6. Экспортируйте аудио, текст или метки. Правки текста сохраняются в TXT;
-   SRT сохраняет исходные сегменты модели с таймкодами записи.
+The Russian control labels are included below so you can find them in the app.
 
-Для нормировки откройте вкладку «Уровень». При небольшой высоте окна отступы
-автоматически уменьшаются, пояснения доступны во всплывающих подсказках.
-Полные имена длинных файлов и сообщения можно прочитать, наведя на них указатель.
+1. Open a recording with the open button or drag a file into the window.
+2. Choose A/B as the input for playback and subsequent processing.
+3. In **Очистка** (Clean), choose a method and strength. Capture a noise profile
+   from a pause without speech when using profile-based reduction.
+4. Use **Речь → Найти речь** (Speech → Find speech), or enter English event prompts
+   in **События** (Events), such as `Speech; Conversation; Whispering`. These prompts
+   can also find events in recordings containing Russian speech.
+5. Select a region or drag over the timeline, listen to it, and transcribe it.
+6. Export audio, text or regions. Text edits are saved to TXT; SRT preserves the
+   model's original segments with timestamps on the recording's timeline.
 
-Space — пуск/пауза, Esc — стоп, Ctrl+O — открыть, Ctrl+S — экспорт аудио,
-Ctrl+Z — отменить обработку, Ctrl+колесо — масштаб времени.
+Open **Уровень** (Level) for normalization. On short windows, spacing contracts and
+additional explanations appear in tooltips. Hover over truncated filenames and
+status messages to read them in full.
 
-## Запуск из исходников
+Space: play/pause · Esc: stop · Ctrl+O: open · Ctrl+S: export audio ·
+Ctrl+Z: undo processing · Ctrl+mouse wheel: zoom the timeline.
 
-Скачайте исходники через **Code → Download ZIP** либо клонируйте репозиторий:
+## Run from source
+
+Download the sources with **Code → Download ZIP**, or clone the repository:
 
 ```bash
 git clone https://github.com/suroviimustang-ai/VoxLoom-Studio.git
 cd VoxLoom-Studio
 ```
 
-В PowerShell, в каталоге проекта, с Python 3.11 x64:
+On Windows, with Python 3.11 x64, run these commands in PowerShell from the project
+directory. For macOS and Ubuntu, follow the [native build guide](docs/BUILDING.md).
 
 ```powershell
 py -3.11 -m venv .venv311
@@ -100,12 +116,13 @@ py -3.11 -m venv .venv311
 ./run.ps1
 ```
 
-Подготовка требует сети и нескольких гигабайт места. Ревизии Whisper и SHA-256
-зафиксированы в `model-sources.json`; FlexSED/CLAP — в скрипте подготовки.
-Модель base — быстрый черновик; small — баланс; turbo — более мощный вариант.
-Наличие модели не гарантирует правильность текста на тихой или повреждённой речи.
+Preparation requires a network connection and several gigabytes of disk space.
+Whisper revisions and SHA-256 checksums are pinned in `model-sources.json`;
+FlexSED/CLAP revisions are pinned in the preparation script. Base is useful for
+quick drafts, small offers a balance, and turbo is a larger option. Having a model
+available does not guarantee accurate transcription of quiet or damaged speech.
 
-## Проверки и сборка
+## Checks and packaging
 
 ```powershell
 .venv311/Scripts/python -m pytest -q
@@ -115,42 +132,49 @@ py -3.11 -m venv .venv311
 .venv311/Scripts/python tools/finalize_flexsed_release.py
 ```
 
-`build_portable.py` создаёт нативную папку приложения / macOS `.app`. Для личного
-Windows-установщика через `build.ps1` нужен Inno Setup 6; для речевого теста — английский
-голос Windows SAPI. Сборка проверяет обязательные веса, DLL, настоящий EXE,
-кодеки, VAD, шумоподавители, FlexSED и все три Whisper без сетевой загрузки.
-Результат: `release/VoxLoom-Studio-Setup-0.2.2-Offline-win-x64.exe`.
-Переносная версия: `dist-flexsed/VoxLoom/VoxLoom.exe`, нужна вся папка целиком.
+`build_portable.py` creates a native application directory or a macOS `.app`.
+The local Windows installer pipeline (`build.ps1`) requires Inno Setup 6 and an
+English Windows SAPI voice for its speech fixture. It checks mandatory weights,
+DLL imports, the frozen executable, codecs, VAD, denoisers, FlexSED and all three
+Whisper models without downloading models at runtime.
+Full installer output: `release/VoxLoom-Studio-Setup-0.3.0-Offline-win-x64.exe`.
+The same pipeline's portable output is `dist-flexsed/VoxLoom/VoxLoom.exe`;
+keep the entire directory.
 
-## Ограничения
+For compact EXE/AppImage/DMG packages, use `python tools/build_portable.py --compact`
+followed by `python tools/package_release.py` on the target OS. See
+[build and packaging instructions](docs/BUILDING.md#compact-release-packages).
 
-- Whisper может пропускать, повторять и придумывать слова: проверяйте прослушиванием.
-  Отсутствие отметки «неразборчиво» не означает доказанную точность.
-- FlexSED ищет события, но не очищает звук, не распознаёт слова и не устанавливает
-  личность говорящего. Его оценки не являются проверенными вероятностями.
-- До 8 каналов и PCM до 1.5 ГБ; обработка в памяти. На 8 ГБ RAM используйте короткие
-  фрагменты для тяжёлых моделей. LUFS поддерживает до 5 каналов.
-- История проекта не сохраняется между запусками. Перед закрытием экспортируйте
-  результаты. Лимитер контролирует sample peak; true-peak не заявлен.
-- Нативные проверки исходников прошли на Windows x64, macOS ARM64 и Ubuntu x64.
-  Полная сборка с весами и проверки упакованного приложения выполнены локально
-  на Windows; готовые macOS/Linux-сборки пока не прошли отдельную проверку.
-- EXE не подписан цифровым сертификатом. Проверки на текущем ПК не заменяют теста
-  установки в чистой виртуальной машине.
+## Limitations
 
-## Лицензия и участие
+- Whisper may omit, repeat or invent words. Verify transcripts by listening.
+  The absence of an “unintelligible” label is not evidence of accuracy.
+- FlexSED detects events; it does not clean audio, transcribe words or identify
+  people. Its scores are not calibrated probabilities.
+- The app accepts up to eight channels and 1.5 GB of PCM data and processes audio
+  in memory. On an 8 GB RAM system, use short selections with large models.
+  LUFS normalization supports up to five channels.
+- Session history is not saved between launches. Export your work before closing.
+  The limiter controls sample peaks; true-peak limiting is not claimed.
+- Source and packaging checks are separate workflows. The release pipeline tests
+  each native bundle, installs all model packs and checks the installed or mounted
+  distribution before publishing it. See the release's reports for its exact commit.
+- The Windows executable is not digitally signed. Local checks do not replace
+  installation testing in a clean virtual machine.
 
-Copyright (C) 2026 MatSoftAI and VoxLoom contributors. Код приложения и его
-собственные ресурсы доступны по [GPLv3](LICENSE), без гарантий. Разрешены
-использование, изменение и распространение с соблюдением лицензии, в том числе
-коммерческое. Сторонний код и веса сохраняют свои лицензии.
+## License and contributing
 
-[Компоненты и лицензии](THIRD_PARTY_NOTICES.md) · [Архитектура](docs/ARCHITECTURE.md) ·
-[Участие](CONTRIBUTING.md) · [Безопасность](SECURITY.md) · [Выпуск](docs/RELEASING.md) ·
-[Изменения](CHANGELOG.md) · [Публикация исходников](docs/PUBLISHING.md).
+Copyright (C) 2026 MatSoftAI and VoxLoom contributors. Application code and original
+assets are available under [GPL-3.0-only](LICENSE), without warranty. Use,
+modification and redistribution, including commercial use, are allowed subject
+to the license. Third-party code and weights retain their respective licenses.
 
-Для разработчиков: [стандарт Python, PowerShell и конфигурации](docs/CODING_STANDARDS.md).
+[Components and licenses](THIRD_PARTY_NOTICES.md) · [Architecture](docs/ARCHITECTURE.md) ·
+[Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Releases](docs/RELEASING.md) ·
+[Changelog](CHANGELOG.md) · [Publishing sources](docs/PUBLISHING.md).
 
-Организация страницы проекта вдохновлена [Nota](https://github.com/nota-daw/nota).
-VoxLoom — самостоятельное приложение MatSoftAI; код и графические ресурсы Nota
-не используются. Зависимости VoxLoom перечислены в `THIRD_PARTY_NOTICES.md`.
+For developers: [Python, PowerShell and configuration standards](docs/CODING_STANDARDS.md).
+
+Repository presentation was inspired by [Nota](https://github.com/nota-daw/nota).
+VoxLoom is an independent MatSoftAI application and does not use Nota code or
+artwork. VoxLoom dependencies are listed in `THIRD_PARTY_NOTICES.md`.
