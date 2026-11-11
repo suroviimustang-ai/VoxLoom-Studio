@@ -83,7 +83,7 @@ class FlexSED:
     def __init__(self, queries):
         if not available():
             raise RuntimeError(
-                "Веса FlexSED / CLAP не установлены. Нужна сборка с FlexSED или запуск tools/prepare_flexsed.py."
+                "Веса FlexSED / CLAP не установлены. Установите пакет FlexSED через «Модели → Установить пакет»."
             )
         import torch
         from transformers import ClapTextModelWithProjection, RobertaTokenizerFast

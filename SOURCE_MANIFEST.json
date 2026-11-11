@@ -26,8 +26,8 @@
   },
   {
     "path": ".github/workflows/release.yml",
-    "bytes": 4148,
-    "sha256": "3c164b53597bb79df6d9969ecb97dbe7ab7194e31b12b6624efbd4475d2d1719"
+    "bytes": 4183,
+    "sha256": "7f722e8d0b3934a4bfadd5fa5991193cf201897808cacc3ab656c9d783adf452"
   },
   {
     "path": ".gitignore",
@@ -36,8 +36,8 @@
   },
   {
     "path": "assets/model-catalog.json",
-    "bytes": 4179,
-    "sha256": "61bc6f81cbc44b21a62e813d591b214cd2845700276281eec426e87ea1ac44bb"
+    "bytes": 4178,
+    "sha256": "6aa1c5d142ba2ed1a283fe1c68f28098a175732f715d6fd30df9e955c0f90dfb"
   },
   {
     "path": "assets/screenshots/workspace.png",
@@ -806,8 +806,8 @@
   },
   {
     "path": "tests/test_modelpacks.py",
-    "bytes": 4550,
-    "sha256": "24f39e6c4b1610cbac7ad7c8133d804d487c4cb976d7d135cd98a0685dd5c84b"
+    "bytes": 4975,
+    "sha256": "1d673441b8f78590e4a8c352ba620ad46262f6bd9141b0789a40e4de902070bf"
   },
   {
     "path": "tests/test_offline_models.py",
@@ -851,8 +851,8 @@
   },
   {
     "path": "tools/build_model_packs.py",
-    "bytes": 3208,
-    "sha256": "252a23b76cc7a1e62093b853da8e90363567a8fe3f681973daf58953b41e08e6"
+    "bytes": 4505,
+    "sha256": "775ee8acf4317b532660f2122dbd4eedde79d3c54f57c1b3b291236465554bc6"
   },
   {
     "path": "tools/build_portable.py",
@@ -1006,8 +1006,8 @@
   },
   {
     "path": "voxloom/events.py",
-    "bytes": 7801,
-    "sha256": "9cd338701adc4ec02b516ff26c8f901e013b59673c03df3d7658d2042042e84c"
+    "bytes": 7825,
+    "sha256": "28aa5c3473d1a2ee1cfd6b40be06fb515735e5250c4bbaa09b1614953087c7cd"
   },
   {
     "path": "voxloom/files.py",
@@ -1061,8 +1061,8 @@
   },
   {
     "path": "voxloom/window.py",
-    "bytes": 54668,
-    "sha256": "7b0076de73fa24103f2e825caffc34bdd3a1d4b1b723ca429a45d1ea12d4d48e"
+    "bytes": 54667,
+    "sha256": "c4abda0ce25c795cc2cb7a556271da3cddc6c5425c5484c78d3094a3ab7b3779"
   },
   {
     "path": "voxloom/worker.py",

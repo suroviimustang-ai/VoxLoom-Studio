@@ -6,6 +6,7 @@ on:
     paths:
       - .github/workflows/release.yml
       - voxloom/__init__.py
+      - tools/build_model_packs.py
 permissions:
   contents: read
 concurrency:

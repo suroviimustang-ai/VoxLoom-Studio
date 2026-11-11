@@ -16,6 +16,13 @@ MODELS = (
 )
 
 
+def text_bytes(path):
+    """Canonicalize generated text metadata across Windows and Unix hosts."""
+    if path.suffix.lower() in {".json", ".txt", ".ini"}:
+        return path.read_bytes().replace(b"\r\n", b"\n")
+    return None
+
+
 def specifications():
     catalog = {}
     for name in MODELS:
@@ -24,10 +31,14 @@ def specifications():
         for path in sorted(directory.rglob("*")):
             if not path.is_file() or ".cache" in path.parts or path.suffix == ".log":
                 continue
-            with path.open("rb") as stream:
-                checksum = hashlib.file_digest(stream, "sha256").hexdigest()
+            canonical = text_bytes(path)
+            if canonical is None:
+                with path.open("rb") as stream:
+                    checksum = hashlib.file_digest(stream, "sha256").hexdigest()
+            else:
+                checksum = hashlib.sha256(canonical).hexdigest()
             files[path.relative_to(directory).as_posix()] = {
-                "bytes": path.stat().st_size,
+                "bytes": path.stat().st_size if canonical is None else len(canonical),
                 "sha256": checksum,
             }
         if not files:
@@ -47,8 +58,22 @@ def main():
         catalog_path.write_text(json.dumps(actual, indent=2) + "\n", encoding="utf-8")
         print(f"Catalog written: {catalog_path}")
         return
-    if actual != json.loads(catalog_path.read_text("utf-8")):
-        raise RuntimeError("Prepared weights differ from the reviewed model catalog")
+    expected = json.loads(catalog_path.read_text("utf-8"))
+    if actual != expected:
+        differences = []
+        for name in sorted(actual["models"].keys() | expected["models"].keys()):
+            found = actual["models"].get(name, {}).get("files", {})
+            trusted = expected["models"].get(name, {}).get("files", {})
+            for relative in sorted(found.keys() | trusted.keys()):
+                if found.get(relative) != trusted.get(relative):
+                    differences.append(
+                        f"{name}/{relative}: expected {trusted.get(relative)}, "
+                        f"found {found.get(relative)}"
+                    )
+        raise RuntimeError(
+            "Prepared weights differ from the reviewed model catalog:\n"
+            + "\n".join(differences)
+        )
     args.output.mkdir(parents=True, exist_ok=True)
     notices = (ROOT / "THIRD_PARTY_NOTICES.md").read_text("utf-8")
     license_paths = [
@@ -77,7 +102,12 @@ def main():
                 ),
             )
             for relative in model["files"]:
-                zf.write(ROOT / "models" / name / relative, relative)
+                source = ROOT / "models" / name / relative
+                canonical = text_bytes(source)
+                if canonical is None:
+                    zf.write(source, relative)
+                else:
+                    zf.writestr(relative, canonical)
         if temporary.stat().st_size >= 2 * 1024**3:
             raise RuntimeError(f"GitHub asset limit exceeded: {target.name}")
         temporary.replace(target)

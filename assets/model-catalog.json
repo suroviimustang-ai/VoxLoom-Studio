@@ -80,8 +80,8 @@
     "flexsed": {
       "files": {
         "clap-text/config.json": {
-          "bytes": 864,
-          "sha256": "2056ec2b87275b8d97eceff4c216287678c196151612b1e0afb5bd6c44cf176a"
+          "bytes": 832,
+          "sha256": "cdb3253e76613220285b6c4d4a6a8c2353ec13faff2c11ae9c78ef5f723ec413"
         },
         "clap-text/merges.txt": {
           "bytes": 456318,
@@ -92,16 +92,16 @@
           "sha256": "86ab947eff23247400d03fedf3497e70d1d692d0397bfb59cc3cfe24f661acb5"
         },
         "clap-text/special_tokens_map.json": {
-          "bytes": 1015,
-          "sha256": "66715ae6a0dd4aff4fe228bcaaccac6e52c83fd0ba80992c2be7d0e43b362307"
+          "bytes": 964,
+          "sha256": "8c785abebea9ae3257b61681b4e6fd8365ceafde980c21970d001e834cf10835"
         },
         "clap-text/tokenizer.json": {
           "bytes": 3558802,
           "sha256": "4fd1d86b4f5b53f40a609fcd11c1f34024b735f870a07439d70202b98493661a"
         },
         "clap-text/tokenizer_config.json": {
-          "bytes": 1456,
-          "sha256": "d55a57ffba32db53fa010794eb43381870bb39c304f2dc908e2c865c992ffda9"
+          "bytes": 1393,
+          "sha256": "e9c8bf45213b2fa2f0bf2c1a99d701b43fb264b2a33076fef5cd81123a20180d"
         },
         "clap-text/vocab.json": {
           "bytes": 798293,
@@ -112,8 +112,8 @@
           "sha256": "5ec9a9b67ae3e612810ce150de06cd517ff7c8b1c640ba39a1422aa1e9040c32"
         },
         "manifest.json": {
-          "bytes": 270,
-          "sha256": "6cd3eddcf1a5ffec179ce39c34f84232cb7abcf7983d8d00e174c91a96e4734e"
+          "bytes": 265,
+          "sha256": "7cf30175124c36888c984f4f541e2bc77bd59d1336f65085f0272e319d7fd7ac"
         }
       }
     }

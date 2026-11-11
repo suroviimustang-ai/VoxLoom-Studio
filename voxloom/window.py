@@ -845,7 +845,7 @@ class MainWindow(W.QMainWindow):
             queries = parse_queries(self.event_queries.text())
             if not available():
                 raise ValueError(
-                    "FlexSED не установлена. Используйте сборку с FlexSED; для исходников — tools/prepare_flexsed.py."
+                    "FlexSED не установлена. Установите пакет FlexSED через «Модели → Установить пакет»."
                 )
         except ValueError as exc:
             return self.error(str(exc))

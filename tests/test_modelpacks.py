@@ -8,6 +8,19 @@ import pytest
 from voxloom import modelpacks, processing
 
 
+def test_pack_text_is_identical_on_windows_and_unix(tmp_path):
+    from tools.build_model_packs import text_bytes
+
+    path = tmp_path / "config.json"
+    path.write_bytes(b'{\r\n  "size": 1\r\n}\r\n')
+    windows = text_bytes(path)
+    path.write_bytes(b'{\n  "size": 1\n}\n')
+    assert text_bytes(path) == windows
+    binary = tmp_path / "model.bin"
+    binary.write_bytes(b"\r\n")
+    assert text_bytes(binary) is None
+
+
 def make_pack(tmp_path, data=b"verified model", extra=None, header=None):
     archive = tmp_path / "pack.zip"
     with zipfile.ZipFile(archive, "w") as zf:
