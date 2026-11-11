@@ -51,19 +51,23 @@ def main():
     result = json.loads((folder / "result.json").read_text("utf-8"))
     if not result.get("ok"):
         raise RuntimeError(result)
-    subprocess.run(
+    smoke = subprocess.run(
         [
             str(executable),
             "--smoke-test",
             str(ROOT / "artifacts/speech_fixture.wav"),
             str(folder),
         ],
-        check=True,
+        check=False,
         env=environment,
         timeout=1800,
     )
     report = json.loads((folder / "release-smoke.json").read_text("utf-8"))
-    if not report.get("ok") or "flexsed-offline-events" not in report["checks"]:
+    if (
+        smoke.returncode != 0
+        or not report.get("ok")
+        or "flexsed-offline-events" not in report["checks"]
+    ):
         raise RuntimeError(report)
     subprocess.run(
         [sys.executable, "tools/verify_release.py", str(executable)],

@@ -18,6 +18,19 @@ env:
   PIP_NO_CACHE_DIR: '1'
   HF_HUB_DISABLE_XET: '1'
 jobs:
+  speech-fixture:
+    runs-on: windows-2022
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate natural synthetic speech fixture
+        shell: powershell
+        run: ./tools/prepare_speech_fixture.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-speech-fixture
+          path: artifacts/speech_fixture.wav
+          retention-days: 1
   models:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
@@ -43,18 +56,8 @@ jobs:
         run: |
           python tools/release_assets.py init
           python tools/release_assets.py upload-models
-      - name: Generate synthetic speech fixture
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y espeak-ng
-          python tools/prepare_speech_fixture.py
-      - uses: actions/upload-artifact@v4
-        with:
-          name: release-speech-fixture
-          path: artifacts/speech_fixture.wav
-          retention-days: 1
   applications:
-    needs: models
+    needs: [models, speech-fixture]
     strategy:
       fail-fast: false
       matrix:

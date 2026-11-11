@@ -26,8 +26,8 @@
   },
   {
     "path": ".github/workflows/release.yml",
-    "bytes": 4215,
-    "sha256": "b94a54238abfee11f4022a9fe91b22ea889b3f2e84d26f0ca2a7bc73f2b3ef22"
+    "bytes": 4290,
+    "sha256": "ab98c6695b03abfbc32b6e896ea4d54e90f6c2d5349e7649a1a1734557f723a1"
   },
   {
     "path": ".gitignore",
@@ -91,13 +91,13 @@
   },
   {
     "path": "docs/BUILDING.md",
-    "bytes": 8489,
-    "sha256": "a93042dfc68d6744e95c11cbaad1e4f4077b8141ccc75ca726a993450e49fc52"
+    "bytes": 8643,
+    "sha256": "ec5cdbac3966c71a9c3e103570f8d2af3ad44fb4e0477e94d80737a9fe8d3ccd"
   },
   {
     "path": "docs/BUILDING.ru.md",
-    "bytes": 12151,
-    "sha256": "6c7ea5c42806ffc8a8451ac16f112aa0666b1e7671cdb85d87b59a0143b443ac"
+    "bytes": 12430,
+    "sha256": "012fd63a2a2673b8ca7c03f55c6cf902bb82c443a5d7efaf533040cf335520f3"
   },
   {
     "path": "docs/CODING_STANDARDS.md",
@@ -956,8 +956,8 @@
   },
   {
     "path": "tools/verify_native_bundle.py",
-    "bytes": 2389,
-    "sha256": "709cb3af936fc2257c7c5b1328ff15bda7e09bbb67f9c0c5e0c75d0d79be120c"
+    "bytes": 2455,
+    "sha256": "4d29ad107e73c33e4b4517212395af7dce50b099b73db71139ed897eb05d50b6"
   },
   {
     "path": "tools/verify_release.py",

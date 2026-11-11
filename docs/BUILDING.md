@@ -145,7 +145,9 @@ on other platforms and save your own `pip freeze` after successful validation.
 
 GitHub Actions includes Windows, macOS ARM64 and Ubuntu jobs. Check the repository's
 Actions page for current results; the first successful native run is linked above.
-CI does not download large weights or evaluate transcription accuracy on real speech.
+The `Native platform checks` workflow does not download large weights. The separate
+release workflow installs all model packs and tests frozen inference with synthetic
+speech; it does not evaluate transcription accuracy on real recordings.
 
 Sources: [PyInstaller native builds](https://pyinstaller.org/en/stable/operating-mode.html),
 [Python management with uv](https://docs.astral.sh/uv/guides/install-python/),
