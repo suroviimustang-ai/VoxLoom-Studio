@@ -100,6 +100,7 @@
   " ms": " мс",
   "Speech threshold": "Порог речи",
   "Silence": "Пауза",
+  "Pause": "Пауза",
   "Silence between speech fragments": "Пауза между речевыми фрагментами",
   "Find speech on track": "Найти речь на дорожке",
   "02  SPEECH TO TEXT · WHISPER": "02  РЕЧЬ В ТЕКСТ · WHISPER",

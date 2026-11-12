@@ -1,3 +1,3 @@
-"""VoxLoom Studio — local speech restoration workspace."""
+"""VoxLoom Studio: offline audio tools with English and Russian interfaces."""
 
 __version__ = "0.4.0"

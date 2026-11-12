@@ -5,6 +5,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "artifacts/startup-check"
@@ -155,6 +156,11 @@ def check(name):
         initialize(app, restored)
         if code == "ru":
             assert not app._qt_language.isEmpty(), "Qt Russian dialogs are missing"
+        window.player.stream = SimpleNamespace(active=True)
+        window.tick()
+        assert window.play_button.text() == ("Pause" if code == "en" else "Пауза")
+        window.player.stream = None
+        window.tick()
         check_controls()
         window.grab().save(str(OUT / f"{name}-{code}-workspace.png"))
         if name == "laptop":

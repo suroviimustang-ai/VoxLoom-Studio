@@ -46,8 +46,8 @@
   },
   {
     "path": "assets/translations/ru.json",
-    "bytes": 26513,
-    "sha256": "7a54178d35790674ff13d24c2f78fd63d5d35335221df956ad1a74f0e1b07aab"
+    "bytes": 26539,
+    "sha256": "dbb6701b4c2ab277f5585dade522c36a62d7f5a279ffe34df58459840f82fa78"
   },
   {
     "path": "assets/voxloom.icns",
@@ -861,8 +861,8 @@
   },
   {
     "path": "tools/check_startup.py",
-    "bytes": 10917,
-    "sha256": "53c9b19d01595dfcf789e2e06e9db84dbe693729049cc2a77bc2035fdb771b64"
+    "bytes": 11179,
+    "sha256": "f4ad6456869fed4da34e4ab6b459a2bd5fb6efb71ad2318a9563a6891bbaa3d6"
   },
   {
     "path": "tools/check_style.py",
@@ -951,8 +951,8 @@
   },
   {
     "path": "voxloom/__init__.py",
-    "bytes": 84,
-    "sha256": "ca8842f933735d08ae21015da712ddd87ec36d149d445585b213a4a12d96da1c"
+    "bytes": 102,
+    "sha256": "ed771d2ad2eac18e58c6b1780a7720ded0b06412182da251aeea3b78cfa10645"
   },
   {
     "path": "voxloom/_vendor/__init__.py",
@@ -1061,8 +1061,8 @@
   },
   {
     "path": "voxloom/window.py",
-    "bytes": 54360,
-    "sha256": "6cb8a344b0b6068a963dc34f6f202a64bd58424664db9d0131023a0e9c00645c"
+    "bytes": 54358,
+    "sha256": "7c4ef0b998b329445d2310608952d24c8b13c6c48158e7234d178158b1602e74"
   },
   {
     "path": "voxloom/worker.py",

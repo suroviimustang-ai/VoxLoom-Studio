@@ -1199,7 +1199,7 @@ class MainWindow(W.QMainWindow):
         bind(
             self.play_button,
             "setText",
-            tr("Silence") if self.player.playing else tr("Play"),
+            tr("Pause") if self.player.playing else tr("Play"),
         )
         self.play_button.setIcon(
             self.style().standardIcon(
