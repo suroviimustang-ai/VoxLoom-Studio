@@ -11,8 +11,8 @@
 </p>
 
 <p align="center">
-  <a href="docs/BUILDING.md">Build the app</a> ·
   <a href="docs/DOWNLOADS.md">Download &amp; install</a> ·
+  <a href="docs/BUILDING.md">Build the app</a> ·
   <a href="#features">Features</a> ·
   <a href="docs/ARCHITECTURE.md">Architecture</a> ·
   <a href="CONTRIBUTING.md">Contribute</a> ·
@@ -24,6 +24,16 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0--only-blue" alt="License: GPL-3.0-only"></a>
   <a href="docs/BUILDING.md"><img src="https://img.shields.io/badge/Python-3.11-blue" alt="Python 3.11"></a>
 </p>
+
+## First launch
+
+1. Download the app for your system: [Windows EXE](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.3.0/VoxLoom-Studio-0.3.0-windows-x64.exe), [Ubuntu AppImage](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.3.0/VoxLoom-Studio-0.3.0-linux-x86_64.AppImage), or [macOS Apple Silicon DMG](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.3.0/VoxLoom-Studio-0.3.0-macos-arm64.dmg).
+2. For your first transcript, download [Whisper Small — ZIP, 448 MB](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.3.0/VoxLoom-Models-whisper-small-v1.zip). For neural speech cleanup, optionally add [DeepFilterNet3 — ZIP, 8 MB](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.3.0/VoxLoom-Models-DeepFilterNet3-v1.zip).
+3. Launch VoxLoom and choose **Модели → Установить пакет…** (Models → Install pack). Select the downloaded ZIP files without unpacking them.
+
+**[Step-by-step guide: from installation to your first transcript](docs/DOWNLOADS.md).**
+No separate Python, Git, API keys or dedicated graphics card are required. In 0.3.0,
+download model packs manually using the links; the app verifies and installs them.
 
 ![VoxLoom workspace: original and processed tracks, speech regions and transcript](assets/screenshots/workspace.png)
 

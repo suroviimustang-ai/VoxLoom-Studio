@@ -111,13 +111,13 @@
   },
   {
     "path": "docs/DOWNLOADS.md",
-    "bytes": 3569,
-    "sha256": "ad49f2d374960bb575f1b2894c150040a82dc188fb8ebf2ddb99b8ff177d56f8"
+    "bytes": 7775,
+    "sha256": "11b16bb877eac55cc706cc77939d86f864eeb46da12a77491eaedffaa4b1b592"
   },
   {
     "path": "docs/DOWNLOADS.ru.md",
-    "bytes": 5035,
-    "sha256": "00a0cbfd93dc368495fe55d7cd64c7ced988433f1d05cb361fe64e5ca15fb5e0"
+    "bytes": 11507,
+    "sha256": "ce3bab6c2a0d287c988839485854c3bccb5d799cf5cc32f0c6999efac2cf8927"
   },
   {
     "path": "docs/LICENSES.md",
@@ -741,13 +741,13 @@
   },
   {
     "path": "README.md",
-    "bytes": 9488,
-    "sha256": "9cb17fb6dd57f2b211eef4526d8dfad18185dec115d5af3caf6a7c08c48a6fdb"
+    "bytes": 10759,
+    "sha256": "fea68a47927101a57ec3572a674b4e0a69465ebbc99affbef26b3798025fca74"
   },
   {
     "path": "README.ru.md",
-    "bytes": 12862,
-    "sha256": "832777269dc3bc59784d13dc8ac432efdb2509bccaa32b28faa1b67a5093002b"
+    "bytes": 14424,
+    "sha256": "6113e5313d60708ff6abb6fc0670af6edd432dc6d6dfd110ce91d1135e1e42f6"
   },
   {
     "path": "requirements-dev.txt",

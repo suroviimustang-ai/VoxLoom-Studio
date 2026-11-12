@@ -13,8 +13,8 @@
 </p>
 
 <p align="center">
-  <a href="docs/BUILDING.ru.md">Собрать приложение</a> ·
   <a href="docs/DOWNLOADS.ru.md">Скачать и установить</a> ·
+  <a href="docs/BUILDING.ru.md">Собрать приложение</a> ·
   <a href="#возможности">Возможности</a> ·
   <a href="docs/ARCHITECTURE.md">Архитектура</a> ·
   <a href="CONTRIBUTING.md">Участие</a> ·
@@ -26,6 +26,16 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0--only-blue" alt="License: GPL-3.0-only"></a>
   <a href="docs/BUILDING.ru.md"><img src="https://img.shields.io/badge/Python-3.11-blue" alt="Python 3.11"></a>
 </p>
+
+## Первый запуск
+
+1. Скачайте приложение для своей системы: [Windows EXE](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.3.0/VoxLoom-Studio-0.3.0-windows-x64.exe), [Ubuntu AppImage](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.3.0/VoxLoom-Studio-0.3.0-linux-x86_64.AppImage) или [macOS Apple Silicon DMG](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.3.0/VoxLoom-Studio-0.3.0-macos-arm64.dmg).
+2. Для первого текста скачайте [Whisper Small — ZIP, 448 МБ](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.3.0/VoxLoom-Models-whisper-small-v1.zip). Для нейросетевой очистки можно добавить [DeepFilterNet3 — ZIP, 8 МБ](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.3.0/VoxLoom-Models-DeepFilterNet3-v1.zip).
+3. Запустите VoxLoom и выберите **Модели → Установить пакет…**. Укажите скачанные ZIP, оставив их целыми.
+
+**[Пошаговая инструкция: от установки до первого текста](docs/DOWNLOADS.ru.md).**
+Python, Git, API-ключи и отдельная видеокарта для этого не требуются. Модели в версии 0.3.0
+скачиваются вручную по ссылкам; приложение проверяет и устанавливает выбранные ZIP.
 
 ![Интерфейс VoxLoom: исходная и обработанная дорожки, метки речи и текст](assets/screenshots/workspace.png)
 
