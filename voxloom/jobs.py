@@ -9,6 +9,7 @@ import numpy as np
 from PyQt6 import QtCore as C
 
 from .diagnostics import LOG
+from .i18n import language, tr
 
 
 class Job(C.QObject):
@@ -30,6 +31,7 @@ class Job(C.QObject):
 
     def start(self, request, data=None, noise=None):
         request = dict(request)
+        request["ui_language"] = language()
         self.action = request.get("action")
         self.temp = tempfile.TemporaryDirectory(prefix="voxloom-")
         if self.action == "install_models":
@@ -80,16 +82,18 @@ class Job(C.QObject):
             if self.cancelled:
                 result = {
                     "ok": False,
-                    "error": "Операция отменена. Предыдущий результат сохранён.",
+                    "error": tr(
+                        "Operation cancelled. The previous result has been preserved."
+                    ),
                 }
             elif (root / "result.json").exists():
                 result = json.loads((root / "result.json").read_text(encoding="utf-8"))
                 if not isinstance(result, dict) or not isinstance(
                     result.get("ok"), bool
                 ):
-                    raise ValueError("Некорректный формат ответа процесса.")
+                    raise ValueError(tr("Invalid worker response format."))
                 if result["ok"] and args and args[0] != 0:
-                    raise RuntimeError("Процесс аварийно завершился после обработки.")
+                    raise RuntimeError(tr("The worker crashed after processing."))
                 if result["ok"] and getattr(self, "action", None) in (
                     "load",
                     "denoise",
@@ -101,18 +105,21 @@ class Job(C.QObject):
                         or not len(output)
                         or not np.isfinite(output).all()
                     ):
-                        raise ValueError("Повреждён результат обработки аудио.")
+                        raise ValueError(tr("The processed audio is invalid."))
             else:
                 self._read_stderr()
                 result = {
                     "ok": False,
-                    "error": f"Процесс обработки завершился без результата.\n{self.stderr_tail[-2500:]}",
+                    "error": tr(
+                        "The worker exited without a result.\n{v0}",
+                        v0=self.stderr_tail[-2500:],
+                    ),
                 }
         except Exception as exc:
             LOG.exception("Invalid worker response")
             result = {
                 "ok": False,
-                "error": f"Не удалось прочитать результат обработки: {exc}",
+                "error": tr("Could not read the processing result: {v0}", v0=exc),
             }
         self._settle(result, output)
 

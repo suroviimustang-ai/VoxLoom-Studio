@@ -1,6 +1,5 @@
 # Build from source: Windows, macOS and Ubuntu
 
-**English** | [Русский](BUILDING.ru.md)
 
 The Git source tree contains code and documentation. Ready-made apps and optional
 model packs are published separately in [GitHub Releases](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases).
@@ -14,11 +13,12 @@ both model-preparation scripts and use the section below.
 | macOS 15+ Apple Silicon | Python 3.11 ARM64, CPU | Native imports, tests and interface checks passed in CI |
 | Ubuntu 24.04 x64 | Python 3.11, CPU | Native imports, tests and interface checks passed in CI |
 
-The [GitHub Actions run on November 11, 2026](https://github.com/suroviimustang-ai/VoxLoom-Studio/actions/runs/42965738853)
-passed 47 tests and six display configurations on each OS. CI uses Windows Server
-2022, macOS 15 ARM64 and Ubuntu 24.04 x64. Full packaging and all-model checks were
-completed locally on Windows. macOS/Linux bundles still require separate validation
-after building them.
+Native release CI builds and validates all three distribution formats. It imports
+every model pack into the frozen application, runs inference offline and checks the
+installed EXE, extracted AppImage or mounted DMG. Consult each release's build
+reports for the source commit and exact checks. Layout validation covers English
+and Russian on six simulated displays. All source and packaged launches default
+to English; user language preferences are stored separately from model files.
 
 Intel Macs are outside this profile: PyTorch stopped providing macOS x86_64 wheels
 after the 2.2 series, while this dependency set uses 2.8. Do not run ARM64 Python

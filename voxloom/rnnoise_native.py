@@ -10,6 +10,7 @@ from importlib.metadata import distribution
 
 import numpy as np
 
+from .i18n import tr
 from .processing import resource_root
 
 
@@ -21,7 +22,7 @@ def library_name(platform=None):
         "linux": "librnnoise.so",
     }
     if platform not in names:
-        raise RuntimeError(f"RNNoise: неподдерживаемая платформа {platform}")
+        raise RuntimeError(tr("RNNoise: unsupported platform {v0}", v0=platform))
     return names[platform]
 
 
@@ -33,7 +34,10 @@ def library_path():
     path = distribution("pyrnnoise").locate_file("pyrnnoise/" + name)
     if not path.is_file():
         raise RuntimeError(
-            f"RNNoise: библиотека {name} отсутствует. Проверьте зависимости для своей ОС."
+            tr(
+                "RNNoise: library {v0} is missing. Check the dependencies for your operating system.",
+                v0=name,
+            )
         )
     return path
 
@@ -54,10 +58,10 @@ def process(audio: np.ndarray) -> np.ndarray:
     lib.rnnoise_process_frame.restype = ct.c_float
     size = lib.rnnoise_get_frame_size()
     if size != 480 or len(audio) % size:
-        raise RuntimeError("RNNoise: несовместимый размер кадра.")
+        raise RuntimeError(tr("RNNoise: incompatible frame size."))
     state = lib.rnnoise_create(None)
     if not state:
-        raise RuntimeError("RNNoise: не удалось создать состояние модели.")
+        raise RuntimeError(tr("RNNoise: could not initialize the model state."))
     out = np.ascontiguousarray(np.clip(audio, -1, 1) * 32768, dtype=np.float32)
     try:
         for start in range(0, len(out), size):

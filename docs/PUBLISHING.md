@@ -1,6 +1,5 @@
 # Publish sources on GitHub
 
-**English** | [Русский](PUBLISHING.ru.md)
 
 Project repository: `suroviimustang-ai/VoxLoom-Studio`.
 Only publish the reviewed source export to Git. The development workspace contains

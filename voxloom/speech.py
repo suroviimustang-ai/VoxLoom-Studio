@@ -8,6 +8,7 @@ from itertools import groupby
 import numpy as np
 
 from .audio import mono_for_speech, resample
+from .i18n import tr
 from .processing import model_directory
 
 
@@ -53,7 +54,7 @@ def review_segment(part, duration: float) -> dict:
     return dict(
         start=start,
         end=end,
-        text="[неразборчиво — требуется прослушивание]" if reasons else text,
+        text=tr("[unintelligible — listen to review]") if reasons else text,
         candidate_text=text if reasons else "",
         needs_review=bool(reasons),
         review_reasons=reasons,
@@ -78,7 +79,7 @@ def review_sequence(segments: list[dict]) -> list[dict]:
             if not record.get("candidate_text"):
                 record["candidate_text"] = record["text"]
             record["needs_review"] = True
-            record["text"] = "[неразборчиво — требуется прослушивание]"
+            record["text"] = tr("[unintelligible — listen to review]")
             if "repeated_segments" not in record.setdefault("review_reasons", []):
                 record["review_reasons"].append("repeated_segments")
     return segments
@@ -127,7 +128,10 @@ def transcribe(
 
     if not whisper_ready(model):
         raise RuntimeError(
-            f"Комплект Whisper {model} отсутствует или повреждён. Установите пакет через «Модели → Установить пакет»."
+            tr(
+                "Whisper {v0} is missing or damaged. Install its pack via Models → Install pack.",
+                v0=model,
+            )
         )
     from ctranslate2 import get_supported_compute_types
     from faster_whisper import WhisperModel

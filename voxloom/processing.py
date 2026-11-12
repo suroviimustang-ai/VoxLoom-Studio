@@ -10,6 +10,7 @@ import numpy as np
 from scipy import ndimage, signal
 
 from .audio import resample, validate
+from .i18n import tr
 
 WHISPER_MODELS = ("base", "small", "large-v3-turbo")
 WHISPER_FILES = ("model.bin", "config.json", "tokenizer.json")
@@ -46,7 +47,7 @@ def writable_models() -> Path:
     if override:
         path = Path(override).expanduser()
         if not path.is_absolute():
-            raise ValueError("VOXLOOM_MODEL_HOME must be an absolute path")
+            raise ValueError(tr("VOXLOOM_MODEL_HOME must be an absolute path"))
         return path
     if not getattr(sys, "frozen", False):
         return resource_root() / "models"
@@ -84,35 +85,49 @@ def normalize(
 ) -> tuple[np.ndarray, str]:
     peak = float(np.max(np.abs(data)))
     if peak < 1e-9:
-        return data.copy(), "Тишина: усиление не применено."
+        return data.copy(), tr("Silence: no gain applied.")
     if mode == "peak":
         gain = min(10 ** (target / 20) / peak, 10 ** (24 / 20))
         result = data * gain
-        note = f"Пиковая нормировка: усиление {20 * np.log10(gain):+.1f} dB (максимум +24 dB)."
+        note = tr(
+            "Peak normalization: {v0:+.1f} dB gain (maximum +24 dB).",
+            v0=20 * np.log10(gain),
+        )
     elif mode == "lufs":
         import pyloudnorm as pyln
 
         if len(data) < rate * 0.4:
             raise ValueError(
-                "Для LUFS нужен фрагмент не короче 0.4 с. Используйте пиковую нормировку."
+                tr(
+                    "LUFS requires at least 0.4 seconds. Use peak normalization for shorter selections."
+                )
             )
         if data.shape[1] > 5:
             raise ValueError(
-                "LUFS поддерживает до 5 каналов; используйте пиковую нормировку."
+                tr(
+                    "LUFS supports up to 5 channels; use peak normalization for more channels."
+                )
             )
         measured = pyln.Meter(rate).integrated_loudness(data)
         if not np.isfinite(measured):
             return (
                 data.copy(),
-                "Уровень ниже порога измерения LUFS; усиление не применено.",
+                tr(
+                    "The level is below the LUFS measurement threshold; no gain applied."
+                ),
             )
         gain_db = np.clip(target - measured, -24, 24)
         result = data * 10 ** (gain_db / 20)
         result = linked_limiter(result, rate)
         actual = pyln.Meter(rate).integrated_loudness(result)
-        note = f"LUFS: {measured:.1f} → {actual:.1f}; цель {target:.1f}. Лимитер: −1 dBFS (sample peak)."
+        note = tr(
+            "LUFS: {v0:.1f} → {v1:.1f}; target {v2:.1f}. Limiter: −1 dBFS (sample peak).",
+            v0=measured,
+            v1=actual,
+            v2=target,
+        )
     else:
-        raise ValueError("Неизвестный режим нормировки.")
+        raise ValueError(tr("Unknown normalization mode."))
     return result.astype(np.float32), note
 
 
@@ -125,7 +140,7 @@ def denoise(
 ) -> np.ndarray:
     data = validate(data, rate)
     if not 0 <= strength <= 1:
-        raise ValueError("Степень очистки должна быть от 0 до 1.")
+        raise ValueError(tr("Cleanup strength must be between 0 and 1."))
     if method == "spectral":
         import noisereduce as nr
 
@@ -169,7 +184,9 @@ def denoise(
         directory = model_directory("DeepFilterNet3")
         if not (directory / "config.ini").is_file():
             raise RuntimeError(
-                "Нет модели DeepFilterNet3. Установите пакет через «Модели → Установить пакет»."
+                tr(
+                    "DeepFilterNet3 is missing. Install its pack via Models → Install pack."
+                )
             )
         torch.set_num_threads(2)
         model, state, _ = init_df(
@@ -201,8 +218,10 @@ def denoise(
             channels.append(np.pad(y, (0, max(0, len(data) - len(y))))[: len(data)])
         result = np.column_stack(channels) * strength + data * (1 - strength)
     else:
-        raise ValueError(f"Неизвестный метод: {method}")
+        raise ValueError(tr("Unknown method: {v0}", v0=method))
     result = validate(result, rate)
     if result.shape != data.shape:
-        raise RuntimeError("Модель изменила длину дорожки; результат отклонён.")
+        raise RuntimeError(
+            tr("The model changed the track length; the result was rejected.")
+        )
     return linked_limiter(result, rate)

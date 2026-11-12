@@ -8,14 +8,18 @@ from pathlib import Path
 
 import numpy as np
 
+from .i18n import set_language, tr
+
 
 def execute(request_path: str) -> int:
+    set_language("en")
     root = Path(request_path).parent
     result = {}
     try:
         request = json.loads(Path(request_path).read_text(encoding="utf-8"))
         if not isinstance(request, dict):
-            raise ValueError("Некорректный запрос обработки.")
+            raise ValueError(tr("Invalid processing request."))
+        set_language(request.get("ui_language", "en"))
         from .audio import load_audio, save_audio
         from .processing import denoise, normalize
         from .speech import detect, transcribe
@@ -26,7 +30,7 @@ def execute(request_path: str) -> int:
 
             paths = request.get("paths")
             if not isinstance(paths, list) or not 1 <= len(paths) <= 5:
-                raise ValueError("Выберите от одного до пяти пакетов моделей.")
+                raise ValueError(tr("Select between one and five model packs."))
             staging = request.get("staging_root")
             installed = [
                 install_pack(
@@ -34,7 +38,7 @@ def execute(request_path: str) -> int:
                 )
                 for path in paths
             ]
-            result = {"message": "Установлены модели: " + ", ".join(installed)}
+            result = {"message": tr("Installed models: ") + ", ".join(installed)}
         elif action == "load":
             data, rate = load_audio(request["path"])
             np.save(root / "output.npy", data, allow_pickle=False)
@@ -79,9 +83,9 @@ def execute(request_path: str) -> int:
                 result = transcribe(data, rate, request["model"], request["language"])
             elif action == "export":
                 save_audio(request["path"], data, rate)
-                result = {"message": f"Сохранено: {request['path']}"}
+                result = {"message": tr("Saved: {v0}", v0=request["path"])}
             else:
-                raise ValueError("Неизвестная операция.")
+                raise ValueError(tr("Unknown operation."))
         result["ok"] = True
     except Exception as exc:
         result = {"ok": False, "error": str(exc), "traceback": traceback.format_exc()}

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0
+
+- English-first UI with persistent live Russian switching on all platforms.
+- Localized splash, controls, tooltips, errors and worker responses.
+- Complete module catalog with verified download links and activation instructions.
+- English-only Markdown documentation; removed separate Russian files.
+- Added catalog/translation coverage, worker-language and session-preservation checks.
+
+
 ## 0.3.0
 
 - Add compact Windows EXE, Linux AppImage and Apple Silicon macOS DMG builders.

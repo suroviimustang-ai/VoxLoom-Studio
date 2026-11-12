@@ -13,11 +13,13 @@ from . import __version__
 from .audio import bounds
 from .diagnostics import LOG
 from .files import write_text_atomic
+from .i18n import language, tr
 from .jobs import Job
 from .playback import Playback
-from .processing import WHISPER_MODELS, model_directory, resource_root, whisper_ready
+from .processing import WHISPER_MODELS, resource_root, writable_models
 from .speech import Region
 from .timeline import Timeline
+from .ui_language import add_item, add_tab, apply_language, bind, retranslate
 
 STYLE = """
 QWidget { background: #161c25; color: #dbe5f3; font-family: 'Segoe UI'; font-size: 10pt; }
@@ -73,11 +75,11 @@ class ElidedLabel(W.QLabel):
     """Keep long filenames, selections and status messages inside their row."""
 
     def __init__(self, text, name="muted"):
-        super().__init__(text)
+        super().__init__()
         self.setObjectName(name)
         self.setMinimumWidth(0)
         self.setSizePolicy(W.QSizePolicy.Policy.Ignored, W.QSizePolicy.Policy.Preferred)
-        self.setToolTip(text)
+        bind(self, "setText", text)
 
     def setText(self, text):
         super().setText(text)
@@ -93,20 +95,21 @@ class ElidedLabel(W.QLabel):
 
 
 def label(text, name=None):
-    widget = W.QLabel(text)
+    widget = W.QLabel()
+    bind(widget, "setText", text)
     if name:
         widget.setObjectName(name)
     return widget
 
 
 class MainWindow(W.QMainWindow):
-    def __init__(self):
+    def __init__(self, settings=None):
         super().__init__()
         fonts = Path(os.environ.get("WINDIR", "C:/Windows")) / "Fonts"
         for filename in ["segoeui.ttf", "seguisb.ttf", "consola.ttf", "seguisym.ttf"]:
             if (fonts / filename).is_file():
                 G.QFontDatabase.addApplicationFont(str(fonts / filename))
-        self.setWindowTitle("VoxLoom Studio · MatSoftAI")
+        bind(self, "setWindowTitle", "VoxLoom Studio · MatSoftAI")
         # Density and panel arrangement follow logical pixels, including high DPI.
         self.setMinimumSize(320, 240)
         self.setStyleSheet(STYLE)
@@ -121,7 +124,7 @@ class MainWindow(W.QMainWindow):
         self.region_index = -1
         self.transcript_segments = []
         self.player = Playback()
-        self.settings = C.QSettings()
+        self.settings = settings if settings is not None else C.QSettings()
         self._density_mode = None
         self._narrow_results = None
         self._build()
@@ -140,7 +143,8 @@ class MainWindow(W.QMainWindow):
         self.refresh()
 
     def button(self, text, callback, primary=False):
-        button = W.QPushButton(text)
+        button = W.QPushButton()
+        bind(button, "setText", text)
         button.clicked.connect(callback)
         if primary:
             button.setObjectName("primary")
@@ -167,29 +171,42 @@ class MainWindow(W.QMainWindow):
         self.tagline = label("STUDIO  /  SPEECH RESTORATION", "muted")
         header.addWidget(self.tagline)
         header.addStretch()
-        self.open_button = self.button("Открыть аудио", self.open_file)
-        self.models_button = self.button("Модели", self.models)
-        self.export_button = self.button("Экспорт аудио", self.export_audio, True)
+        self.ui_language = W.QComboBox()
+        self.ui_language.addItem("English", "en")
+        self.ui_language.addItem("Русский", "ru")
+        self.ui_language.setCurrentIndex(self.ui_language.findData(language()))
+        bind(
+            self.ui_language,
+            "setToolTip",
+            tr("Interface language (separate from transcription language)"),
+        )
+        self.ui_language.currentIndexChanged.connect(self.change_language)
+        header.addWidget(self.ui_language)
+        self.open_button = self.button(tr("Open audio"), self.open_file)
+        self.models_button = self.button(tr("Models"), self.models)
+        self.export_button = self.button(tr("Export audio"), self.export_audio, True)
         for widget in [self.open_button, self.models_button, self.export_button]:
             header.addWidget(widget)
         layout.addLayout(header)
         transport = self.transport_layout = W.QHBoxLayout()
-        self.play_button = self.button("Пуск", self.toggle_play)
-        self.stop_button = self.button("Стоп", self.stop)
+        self.play_button = self.button(tr("Play"), self.toggle_play)
+        self.stop_button = self.button(tr("Stop"), self.stop)
         self.stop_button.setIcon(
             self.style().standardIcon(W.QStyle.StandardPixmap.SP_MediaStop)
         )
-        self.play_button.setToolTip("Пуск / пауза — Пробел")
-        self.stop_button.setToolTip("Стоп — Esc")
+        bind(self.play_button, "setToolTip", tr("Play / pause — Space"))
+        bind(self.stop_button, "setToolTip", tr("Stop — Esc"))
         self.clock = label("00:00.000", "clock")
         self.a_b = W.QComboBox()
-        self.a_b.addItem("A  ·  Исходник", "original")
-        self.a_b.addItem("B  ·  Результат", "result")
-        self.a_b.setToolTip(
-            "Дорожка для прослушивания, поиска речи и последующей обработки"
+        add_item(self.a_b, tr("A  ·  Original"), "original")
+        add_item(self.a_b, tr("B  ·  Result"), "result")
+        bind(
+            self.a_b,
+            "setToolTip",
+            tr("Track used for playback, speech detection and subsequent processing"),
         )
         self.a_b.currentIndexChanged.connect(self.switch_track)
-        self.selection_label = ElidedLabel("Весь файл")
+        self.selection_label = ElidedLabel(tr("Whole file"))
         for widget in [
             self.play_button,
             self.stop_button,
@@ -200,15 +217,15 @@ class MainWindow(W.QMainWindow):
             transport.addWidget(widget, 1 if widget is self.selection_label else 0)
         self.zoom_out = self.button("−", lambda: self.timeline.zoom(1.5))
         self.zoom_in = self.button("+", lambda: self.timeline.zoom(1 / 1.5))
-        self.fit_button = self.button("Весь файл", lambda: self.timeline.fit())
-        self.zoom_out.setToolTip("Отдалить дорожку")
-        self.zoom_in.setToolTip("Приблизить дорожку")
-        self.fit_button.setToolTip("Показать всю запись")
+        self.fit_button = self.button(tr("Whole file"), lambda: self.timeline.fit())
+        bind(self.zoom_out, "setToolTip", tr("Zoom out"))
+        bind(self.zoom_in, "setToolTip", tr("Zoom in"))
+        bind(self.fit_button, "setToolTip", tr("Fit the entire recording"))
         for button in (self.zoom_out, self.zoom_in, self.fit_button):
             transport.addWidget(button)
         layout.addLayout(transport)
         self.file_label = ElidedLabel(
-            "Локальная обработка • аудиозаписи не отправляются в облако"
+            tr("Local processing • recordings are not sent to the cloud")
         )
         layout.addWidget(self.file_label)
         body = self.body = W.QSplitter(C.Qt.Orientation.Horizontal)
@@ -224,68 +241,75 @@ class MainWindow(W.QMainWindow):
         left.addWidget(tabs)
         clean = W.QWidget()
         clean_layout = W.QVBoxLayout(clean)
-        tabs.addTab(clean, "Очистка")
-        clean_layout.addWidget(label("01  ШУМОПОДАВЛЕНИЕ", "section"))
+        add_tab(tabs, clean, tr("Cleanup"))
+        clean_layout.addWidget(label(tr("01  NOISE REDUCTION"), "section"))
         self.method = W.QComboBox()
         for name, key in [
-            ("Spectral Gate · адаптивный", "spectral"),
-            ("RNNoise · нейросеть", "rnnoise"),
-            ("DeepFilterNet3 · нейросеть", "deepfilter"),
-            ("DSP · гул 50 Гц / низкие частоты", "dsp"),
+            (tr("Spectral Gate · adaptive"), "spectral"),
+            (tr("RNNoise · neural"), "rnnoise"),
+            (tr("DeepFilterNet3 · neural"), "deepfilter"),
+            (tr("DSP · 50 Hz hum / low frequencies"), "dsp"),
         ]:
-            self.method.addItem(name, key)
+            add_item(self.method, name, key)
         clean_layout.addWidget(self.method)
         self.strength = W.QSlider(C.Qt.Orientation.Horizontal)
         self.strength.setRange(0, 100)
         self.strength.setValue(80)
-        self.strength_label = label("Сила обработки · 80%", "muted")
+        self.strength_label = label(tr("Cleanup strength · 80%"), "muted")
         self.strength.valueChanged.connect(
-            lambda v: self.strength_label.setText(f"Сила обработки · {v}%")
+            lambda v: bind(
+                self.strength_label, "setText", tr("Cleanup strength · {v0}%", v0=v)
+            )
         )
         clean_layout.addWidget(self.strength_label)
         clean_layout.addWidget(self.strength)
-        self.use_noise = W.QCheckBox("Использовать профиль шума")
+        self.use_noise = W.QCheckBox()
+        bind(self.use_noise, "setText", tr("Use noise profile"))
         clean_layout.addWidget(self.use_noise)
-        self.noise_button = self.button("Взять шум из выделения", self.capture_noise)
+        self.noise_button = self.button(
+            tr("Capture noise from selection"), self.capture_noise
+        )
         clean_layout.addWidget(self.noise_button)
-        self.noise_label = label("Выделите участок без речи (≥ 0.1 с).", "muted")
+        self.noise_label = label(tr("Select at least 0.1 s without speech."), "muted")
         self.noise_label.setWordWrap(True)
         clean_layout.addWidget(self.noise_label)
-        self.clean_button = self.button("Очистить", self.clean, True)
+        self.clean_button = self.button(tr("Clean"), self.clean, True)
         clean_layout.addWidget(self.clean_button)
         clean_layout.addStretch()
         level = W.QWidget()
         level_layout = W.QVBoxLayout(level)
-        tabs.addTab(level, "Уровень")
-        level_layout.addWidget(label("НОРМИРОВКА ГРОМКОСТИ", "section"))
+        add_tab(tabs, level, tr("Level"))
+        level_layout.addWidget(label(tr("LOUDNESS NORMALIZATION"), "section"))
         self.norm_mode = W.QComboBox()
-        self.norm_mode.addItem("Интегральная громкость · LUFS", "lufs")
-        self.norm_mode.addItem("Пиковая · dBFS", "peak")
+        add_item(self.norm_mode, tr("Integrated loudness · LUFS"), "lufs")
+        add_item(self.norm_mode, tr("Peak · dBFS"), "peak")
         level_layout.addWidget(self.norm_mode)
         self.target = W.QDoubleSpinBox()
         self.target.setRange(-36, -1)
         self.target.setValue(-16)
-        self.target.setSuffix(" LUFS")
+        bind(self.target, "setSuffix", " LUFS")
         self.norm_mode.currentIndexChanged.connect(self.normalization_mode)
         level_layout.addWidget(self.target)
-        self.normalize_button = self.button("Нормировать", self.apply_normalize)
+        self.normalize_button = self.button(tr("Normalize"), self.apply_normalize)
         level_layout.addWidget(self.normalize_button)
         note = label(
-            "Обрабатывается активная дорожка A/B. Если есть выделение — только этот участок. Исходник всегда доступен.",
+            tr(
+                "Processes the active A/B track, or just the selection if present. The original remains available."
+            ),
             "muted",
         )
         note.setWordWrap(True)
         level_layout.addWidget(note)
         level_layout.addStretch()
-        self.undo_button = self.button("Отменить обработку", self.undo)
+        self.undo_button = self.button(tr("Undo processing"), self.undo)
         self.undo_button.setIcon(
             self.style().standardIcon(W.QStyle.StandardPixmap.SP_ArrowBack)
         )
         left.addWidget(self.undo_button)
         speech = W.QWidget()
         speech_layout = W.QVBoxLayout(speech)
-        tabs.addTab(speech, "Речь")
-        speech_layout.addWidget(label("01  ПОИСК РЕЧИ · SILERO", "section"))
+        add_tab(tabs, speech, tr("Speech"))
+        speech_layout.addWidget(label(tr("01  SPEECH DETECTION · SILERO"), "section"))
         self.threshold = W.QDoubleSpinBox()
         self.threshold.setRange(0.1, 0.95)
         self.threshold.setSingleStep(0.05)
@@ -293,73 +317,87 @@ class MainWindow(W.QMainWindow):
         self.silence = W.QSpinBox()
         self.silence.setRange(100, 3000)
         self.silence.setValue(350)
-        self.silence.setSuffix(" мс")
+        bind(self.silence, "setSuffix", tr(" ms"))
         vad_fields = W.QFormLayout()
-        vad_fields.addRow("Порог речи", self.threshold)
-        vad_fields.addRow("Пауза", self.silence)
-        self.silence.setToolTip("Пауза между речевыми фрагментами")
+        vad_fields.addRow(label(tr("Speech threshold")), self.threshold)
+        vad_fields.addRow(label(tr("Silence")), self.silence)
+        bind(self.silence, "setToolTip", tr("Silence between speech fragments"))
         speech_layout.addLayout(vad_fields)
-        self.detect_button = self.button("Найти речь на дорожке", self.detect, True)
+        self.detect_button = self.button(tr("Find speech on track"), self.detect, True)
         speech_layout.addWidget(self.detect_button)
-        speech_layout.addWidget(label("02  РЕЧЬ В ТЕКСТ · WHISPER", "section"))
+        speech_layout.addWidget(label(tr("02  SPEECH TO TEXT · WHISPER"), "section"))
         self.asr_model = W.QComboBox()
         for name in WHISPER_MODELS:
-            self.asr_model.addItem(name)
+            add_item(self.asr_model, name)
         self.asr_model.setCurrentText("small")
         speech_layout.addWidget(self.asr_model)
         self.language = W.QComboBox()
         for text, key in [
-            ("Русский", "ru"),
-            ("Автоопределение", "auto"),
-            ("English", "en"),
+            (tr("Russian"), "ru"),
+            (tr("Auto-detect"), "auto"),
+            (tr("English"), "en"),
         ]:
-            self.language.addItem(text, key)
+            add_item(self.language, text, key)
         speech_layout.addWidget(self.language)
         self.transcribe_button = self.button(
-            "Распознать выделение", self.transcribe, True
+            tr("Transcribe selection"), self.transcribe, True
         )
         speech_layout.addWidget(self.transcribe_button)
         hint = label(
-            "Щёлкните речевой фрагмент на дорожке или выделите участок мышью. Распознаётся только выделение активной дорожки.",
+            tr(
+                "Click a speech region or drag to select audio. Only the selection on the active track is transcribed."
+            ),
             "muted",
         )
         hint.setWordWrap(True)
         speech_layout.addWidget(hint)
         self.speech_hint = hint
-        self.transcribe_button.setToolTip(hint.text())
+        bind(
+            self.transcribe_button,
+            "setToolTip",
+            hint._language_bindings[("setText", None)][0],
+        )
         speech_layout.addStretch()
         events = W.QWidget()
         event_layout = W.QVBoxLayout(events)
-        tabs.addTab(events, "События")
-        event_layout.addWidget(label("FLEXSED · ПОИСК ПО ОПИСАНИЮ", "section"))
+        add_tab(tabs, events, tr("Events"))
+        event_layout.addWidget(label(tr("FLEXSED · SEARCH BY DESCRIPTION"), "section"))
         event_hint = label(
-            "События на английском через ;. Модель ищет звуки, в том числе в русской записи. Результат — метки для прослушивания.",
+            tr(
+                "Enter events in English separated by semicolons. The model also works with Russian recordings. Results are markers for listening."
+            ),
             "muted",
         )
         event_hint.setWordWrap(True)
         event_layout.addWidget(event_hint)
         self.event_queries = W.QLineEdit("Speech; Conversation; Whispering")
-        self.event_queries.setPlaceholderText("Speech; Dog; Door")
+        bind(self.event_queries, "setPlaceholderText", "Speech; Dog; Door")
         event_layout.addWidget(self.event_queries)
-        event_layout.addWidget(label("Порог оценки модели", "muted"))
+        event_layout.addWidget(label(tr("Model score threshold"), "muted"))
         self.event_threshold = W.QDoubleSpinBox()
         self.event_threshold.setRange(0.05, 0.95)
         self.event_threshold.setSingleStep(0.05)
         self.event_threshold.setValue(0.5)
         event_layout.addWidget(self.event_threshold)
         self.event_channel = W.QComboBox()
-        self.event_channel.addItem("Все каналы по отдельности", 0)
+        add_item(self.event_channel, tr("Each channel separately"), 0)
         event_layout.addWidget(self.event_channel)
-        self.events_button = self.button("Найти события", self.detect_events, True)
+        self.events_button = self.button(tr("Find events"), self.detect_events, True)
         event_layout.addWidget(self.events_button)
         note = label(
-            "Анализируется выделение или вся активная дорожка A/B. Цветные полосы под волной обозначают найденные события. Поиск не меняет звук. Точность на тихой речи требует проверки.",
+            tr(
+                "Analyzes the selection or the entire active A/B track. Colored bars below the waveform mark events. Audio is unchanged. Review quiet speech by listening."
+            ),
             "muted",
         )
         note.setWordWrap(True)
         event_layout.addWidget(note)
         self.event_note = note
-        self.events_button.setToolTip(note.text())
+        bind(
+            self.events_button,
+            "setToolTip",
+            note._language_bindings[("setText", None)][0],
+        )
         event_layout.addStretch()
         body.addWidget(self.controls)
         workspace = self.workspace = W.QSplitter(C.Qt.Orientation.Vertical)
@@ -382,18 +420,24 @@ class MainWindow(W.QMainWindow):
         regions_layout = W.QVBoxLayout(regions_box)
         regions_layout.setContentsMargins(0, 0, 6, 0)
         regions_header = W.QHBoxLayout()
-        self.regions_label = label("МЕТКИ", "section")
+        self.regions_label = label(tr("MARKERS"), "section")
         regions_header.addWidget(self.regions_label)
         regions_header.addStretch()
         self.add_region_button = self.button("+", self.add_region)
         self.delete_region_button = self.button("−", self.delete_region)
-        self.add_region_button.setToolTip("Добавить выделение как речевой фрагмент")
-        self.delete_region_button.setToolTip("Удалить выбранный речевой фрагмент")
+        bind(
+            self.add_region_button, "setToolTip", tr("Add selection as a speech region")
+        )
+        bind(
+            self.delete_region_button,
+            "setToolTip",
+            tr("Delete the selected speech region"),
+        )
         regions_header.addWidget(self.add_region_button)
         regions_header.addWidget(self.delete_region_button)
         regions_layout.addLayout(regions_header)
         self.table = W.QTableWidget(0, 3)
-        self.table.setHorizontalHeaderLabels(["№", "Начало", "Длина"])
+        bind(self.table, "setHorizontalHeaderLabels", ["№", tr("Start"), tr("Length")])
         self.table.horizontalHeader().setSectionResizeMode(
             W.QHeaderView.ResizeMode.Stretch
         )
@@ -406,10 +450,12 @@ class MainWindow(W.QMainWindow):
         self.table.itemSelectionChanged.connect(self.table_selected)
         self.table.cellDoubleClicked.connect(lambda *_: self.play_selection())
         self.region_tabs = W.QTabWidget()
-        self.region_tabs.addTab(self.table, "Речь")
+        add_tab(self.region_tabs, self.table, tr("Speech"))
         self.event_table = W.QTableWidget(0, 4)
-        self.event_table.setHorizontalHeaderLabels(
-            ["Событие", "Начало", "Канал", "Оценка"]
+        bind(
+            self.event_table,
+            "setHorizontalHeaderLabels",
+            [tr("Event"), tr("Start"), tr("Channel"), tr("Score")],
         )
         self.event_table.horizontalHeader().setSectionResizeMode(
             W.QHeaderView.ResizeMode.Stretch
@@ -424,15 +470,15 @@ class MainWindow(W.QMainWindow):
         self.event_table.setEditTriggers(W.QAbstractItemView.EditTrigger.NoEditTriggers)
         self.event_table.itemSelectionChanged.connect(self.event_selected)
         self.event_table.cellDoubleClicked.connect(lambda *_: self.play_selection())
-        self.region_tabs.addTab(self.event_table, "События")
+        add_tab(self.region_tabs, self.event_table, tr("Events"))
         self.region_tabs.currentChanged.connect(lambda _: self.refresh())
         regions_layout.addWidget(self.region_tabs)
         region_actions = W.QHBoxLayout()
-        self.listen_button = self.button("Фрагмент", self.play_selection)
+        self.listen_button = self.button(tr("Listen"), self.play_selection)
         self.listen_button.setIcon(
             self.style().standardIcon(W.QStyle.StandardPixmap.SP_MediaPlay)
         )
-        self.labels_button = self.button("Метки JSON", self.export_regions)
+        self.labels_button = self.button(tr("Markers JSON"), self.export_regions)
         region_actions.addWidget(self.listen_button)
         region_actions.addWidget(self.labels_button)
         regions_layout.addLayout(region_actions)
@@ -440,20 +486,30 @@ class MainWindow(W.QMainWindow):
         transcript_box = self.transcript_box = W.QWidget()
         text_layout = W.QVBoxLayout(transcript_box)
         text_layout.setContentsMargins(6, 0, 0, 0)
-        transcript_title = self.transcript_title = label("ТЕКСТ ВЫДЕЛЕНИЯ", "section")
+        transcript_title = self.transcript_title = label(
+            tr("SELECTION TRANSCRIPT"), "section"
+        )
         transcript_title.setWordWrap(True)
         text_layout.addWidget(transcript_title)
         self.transcript = W.QTextEdit()
-        self.transcript.setPlaceholderText(
-            "Здесь появится распознанный текст.\n\nВкладка «Речь» → «Распознать выделение».\nТекст можно исправить перед экспортом TXT."
+        bind(
+            self.transcript,
+            "setPlaceholderText",
+            tr(
+                "Recognized text will appear here.\n\nSpeech tab → Transcribe selection.\nYou can edit the text before exporting TXT."
+            ),
         )
         text_layout.addWidget(self.transcript)
         text_actions = W.QHBoxLayout()
         self.save_text_button = self.button("TXT", self.export_text)
-        self.save_text_button.setToolTip("Сохранить отредактированный текст")
+        bind(self.save_text_button, "setToolTip", tr("Save edited text"))
         self.save_srt_button = self.button("SRT", self.export_srt)
-        self.save_srt_button.setToolTip(
-            "Исходная транскрипция модели с таймкодами записи; правки редактора сохраняются в TXT"
+        bind(
+            self.save_srt_button,
+            "setToolTip",
+            tr(
+                "Original model transcript with recording timestamps; editor changes are saved in TXT"
+            ),
         )
         text_actions.addWidget(self.save_text_button)
         text_actions.addWidget(self.save_srt_button)
@@ -464,7 +520,7 @@ class MainWindow(W.QMainWindow):
         bottom.setSizes([420, 640])
         footer = self.footer_layout = W.QHBoxLayout()
         self.message = ElidedLabel(
-            "Готово. Откройте запись, затем выберите очистку или поиск речи."
+            tr("Ready. Open a recording, then choose cleanup or speech detection.")
         )
         footer.addWidget(self.message, 1)
         self.progress = W.QProgressBar()
@@ -473,13 +529,18 @@ class MainWindow(W.QMainWindow):
         self.progress.setTextVisible(False)
         self.progress.hide()
         footer.addWidget(self.progress)
-        self.cancel_button = self.button("Отменить задачу", self.cancel_job)
+        self.cancel_button = self.button(tr("Cancel task"), self.cancel_job)
         self.cancel_button.setObjectName("danger")
         self.cancel_button.hide()
         footer.addWidget(self.cancel_button)
         layout.addLayout(footer)
-        self.statusBar().showMessage(
-            f"VoxLoom Studio {__version__} · Offline  •  MatSoftAI  |  Ctrl+колесо: масштаб  •  Space: пуск/пауза"
+        bind(
+            self.statusBar(),
+            "showMessage",
+            tr(
+                "VoxLoom Studio {v0} · Offline  •  MatSoftAI  |  Ctrl+wheel: zoom  •  Space: play/pause",
+                v0=__version__,
+            ),
         )
         self.page_layouts = (clean_layout, level_layout, speech_layout, event_layout)
         for combo in self.controls.findChildren(W.QComboBox):
@@ -491,6 +552,15 @@ class MainWindow(W.QMainWindow):
                 W.QSizePolicy.Policy.Expanding, W.QSizePolicy.Policy.Fixed
             )
         self._apply_density()
+
+    def change_language(self):
+        code = self.ui_language.currentData()
+        apply_language(W.QApplication.instance(), code)
+        self.settings.setValue("ui_language", code)
+        self.settings.sync()
+        retranslate(self)
+        self.timeline.update()
+        bind(self.message, "setText", tr("Interface language saved."))
 
     def _apply_density(self):
         if not hasattr(self, "page_layouts"):
@@ -523,8 +593,8 @@ class MainWindow(W.QMainWindow):
         if narrow != self._narrow_results:
             self._narrow_results = narrow
             if narrow:
-                self.results_tabs.addTab(self.regions_box, "Метки")
-                self.results_tabs.addTab(self.transcript_box, "Текст")
+                add_tab(self.results_tabs, self.regions_box, tr("Markers"))
+                add_tab(self.results_tabs, self.transcript_box, tr("Text"))
                 self.results_host.setCurrentWidget(self.results_tabs)
             else:
                 while self.results_tabs.count():
@@ -554,6 +624,7 @@ class MainWindow(W.QMainWindow):
             self.a_b,
             self.open_button,
             self.models_button,
+            self.ui_language,
         ]:
             widget.setEnabled(not busy)
         for widget in [
@@ -592,7 +663,7 @@ class MainWindow(W.QMainWindow):
         self.save_srt_button.setEnabled(bool(self.transcript_segments) and not busy)
 
     def error(self, text):
-        self.message.setText(str(text).splitlines()[0][:180])
+        bind(self.message, "setText", str(text).splitlines()[0][:180])
         W.QMessageBox.warning(self, "VoxLoom Studio", text)
 
     def open_file(self):
@@ -600,9 +671,11 @@ class MainWindow(W.QMainWindow):
             return
         path, _ = W.QFileDialog.getOpenFileName(
             self,
-            "Открыть аудиозапись",
+            tr("Open audio recording"),
             self.settings.value("folder", ""),
-            "Аудио (*.wav *.flac *.mp3 *.ogg *.oga *.opus *.aac *.acc *.m4a *.aif *.aiff *.wma *.mp4 *.webm);;Все файлы (*)",
+            tr(
+                "Audio (*.wav *.flac *.mp3 *.ogg *.oga *.opus *.aac *.acc *.m4a *.aif *.aiff *.wma *.mp4 *.webm);;All files (*)"
+            ),
         )
         if path:
             self.load_path(path)
@@ -629,26 +702,32 @@ class MainWindow(W.QMainWindow):
             self.event_analysis = {}
             self.update_events()
             self.event_channel.clear()
-            self.event_channel.addItem("Все каналы по отдельности", 0)
+            add_item(self.event_channel, tr("Each channel separately"), 0)
             for channel in range(output.shape[1]):
-                self.event_channel.addItem(f"Канал {channel + 1}", channel + 1)
+                add_item(
+                    self.event_channel, tr("Channel {v0}", v0=channel + 1), channel + 1
+                )
             self.transcript.clear()
             self.transcript_segments = []
             self.use_noise.setChecked(False)
-            self.noise_label.setText("Выделите участок без речи (≥ 0.1 с).")
+            bind(
+                self.noise_label, "setText", tr("Select at least 0.1 s without speech.")
+            )
             self.a_b.setCurrentIndex(0)
             self.timeline.set_audio(self.source, None, self.rate)
             self.timeline.fit()
             self.update_regions()
             self.select_range(0, 0)
-            self.file_label.setText(
-                f"{Path(path).name}   •   {self.rate:,} Hz   •   {output.shape[1]} ch   •   {len(output) / self.rate:.2f} s"
+            bind(
+                self.file_label,
+                "setText",
+                f"{Path(path).name}   •   {self.rate:,} Hz   •   {output.shape[1]} ch   •   {len(output) / self.rate:.2f} s",
             )
             self.settings.setValue("folder", str(Path(path).parent))
 
         self.run_job(
             {"action": "load", "path": str(path)},
-            "Открытие и декодирование записи…",
+            tr("Opening and decoding the recording…"),
             loaded,
         )
 
@@ -658,7 +737,7 @@ class MainWindow(W.QMainWindow):
         self.player.pause()
         job = Job(self)
         self.job = job
-        self.message.setText(title)
+        bind(self.message, "setText", title)
         self.refresh()
 
         def finished(response, output):
@@ -666,15 +745,15 @@ class MainWindow(W.QMainWindow):
             try:
                 if response.get("ok"):
                     callback(response, output)
-                    self.message.setText(response.get("message", "Готово."))
+                    bind(self.message, "setText", response.get("message", tr("Done.")))
                 elif job.cancelled:
-                    self.message.setText(response["error"])
+                    bind(self.message, "setText", response["error"])
                 else:
                     LOG.error(
                         "Worker failed: %s",
                         response.get("traceback", response.get("error")),
                     )
-                    self.error(response.get("error", "Ошибка обработки."))
+                    self.error(response.get("error", tr("Processing error.")))
             except Exception as exc:
                 LOG.exception("Applying worker result failed")
                 self.error(str(exc))
@@ -710,7 +789,7 @@ class MainWindow(W.QMainWindow):
 
         def completed(response, output):
             if output.shape != current[a:b].shape or not np.isfinite(output).all():
-                raise ValueError("Недопустимый результат обработки.")
+                raise ValueError(tr("Invalid processing result."))
             self.previous = self.result
             updated = current.copy()
             # Short edge fades avoid clicks on partial edits; the file edges are untouched.
@@ -738,7 +817,9 @@ class MainWindow(W.QMainWindow):
     def clean(self):
         if self.use_noise.isChecked() and self.noise is None:
             return self.error(
-                "Сначала выделите участок без речи и нажмите «Взять шум из выделения»."
+                tr(
+                    "Select a fragment without speech, then click Capture noise from selection."
+                )
             )
         self.process_audio(
             {
@@ -746,7 +827,7 @@ class MainWindow(W.QMainWindow):
                 "method": self.method.currentData(),
                 "strength": self.strength.value() / 100,
             },
-            "Шумоочистка…",
+            tr("Reducing noise…"),
             self.noise
             if self.use_noise.isChecked() and self.method.currentData() == "spectral"
             else None,
@@ -757,18 +838,26 @@ class MainWindow(W.QMainWindow):
             return
         a, b = self.processing_range()
         if b - a < self.rate * 0.1:
-            return self.error("Для профиля шума выделите не менее 0.1 с без речи.")
+            return self.error(
+                tr("Select at least 0.1 seconds without speech for the noise profile.")
+            )
         self.noise = self.active()[a:b].copy()
         self.use_noise.setChecked(True)
-        self.noise_label.setText(
-            f"Профиль: {a / self.rate:.2f}–{b / self.rate:.2f} с. Применяется только к Spectral Gate."
+        bind(
+            self.noise_label,
+            "setText",
+            tr(
+                "Profile: {v0:.2f}–{v1:.2f} s. Used by Spectral Gate only.",
+                v0=a / self.rate,
+                v1=b / self.rate,
+            ),
         )
 
     def normalization_mode(self):
         peak = self.norm_mode.currentData() == "peak"
         self.target.setRange(-36, -1)
         self.target.setValue(-1 if peak else -16)
-        self.target.setSuffix(" dBFS" if peak else " LUFS")
+        bind(self.target, "setSuffix", " dBFS" if peak else " LUFS")
 
     def apply_normalize(self):
         self.process_audio(
@@ -777,7 +866,7 @@ class MainWindow(W.QMainWindow):
                 "mode": self.norm_mode.currentData(),
                 "target": self.target.value(),
             },
-            "Нормировка громкости…",
+            tr("Normalizing loudness…"),
         )
 
     def undo(self):
@@ -789,7 +878,7 @@ class MainWindow(W.QMainWindow):
         if self.result is None:
             self.a_b.setCurrentIndex(0)
         self.timeline.set_audio(self.source, self.result, self.rate)
-        self.message.setText("Последняя обработка отменена.")
+        bind(self.message, "setText", tr("Last processing step undone."))
         self.refresh()
 
     def detect(self):
@@ -803,7 +892,9 @@ class MainWindow(W.QMainWindow):
             self.region_tabs.setCurrentIndex(0)
             if self._narrow_results:
                 self.results_tabs.setCurrentWidget(self.regions_box)
-            response["message"] = f"Найдено речевых фрагментов: {len(self.regions)}."
+            response["message"] = tr(
+                "Speech regions found: {v0}.", v0=len(self.regions)
+            )
 
         self.run_job(
             {
@@ -812,7 +903,7 @@ class MainWindow(W.QMainWindow):
                 "threshold": self.threshold.value(),
                 "silence_ms": self.silence.value(),
             },
-            "Silero VAD: поиск речи…",
+            tr("Silero VAD: finding speech…"),
             completed,
             self.active(),
         )
@@ -826,14 +917,18 @@ class MainWindow(W.QMainWindow):
             for col, value in enumerate(
                 [
                     f"{row + 1:02}",
-                    f"{region.start:.3f} с",
-                    f"{region.end - region.start:.3f} с",
+                    tr("{v0:.3f} s", v0=region.start),
+                    tr("{v0:.3f} s", v0=region.end - region.start),
                 ]
             ):
-                self.table.setItem(row, col, W.QTableWidgetItem(value))
+                item = W.QTableWidgetItem()
+                bind(item, "setText", value)
+                self.table.setItem(row, col, item)
         self.table.clearSelection()
         self.table.blockSignals(False)
-        self.region_tabs.setTabText(0, f"Речь · {len(self.regions)}")
+        bind(
+            self.region_tabs, "setTabText", 0, tr("Speech · {v0}", v0=len(self.regions))
+        )
         self.region_index = -1
 
     def detect_events(self):
@@ -845,7 +940,9 @@ class MainWindow(W.QMainWindow):
             queries = parse_queries(self.event_queries.text())
             if not available():
                 raise ValueError(
-                    "FlexSED не установлена. Установите пакет FlexSED через «Модели → Установить пакет»."
+                    tr(
+                        "FlexSED is missing. Install the FlexSED pack via Models → Install pack."
+                    )
                 )
         except ValueError as exc:
             return self.error(str(exc))
@@ -868,8 +965,9 @@ class MainWindow(W.QMainWindow):
             self.region_tabs.setCurrentIndex(1)
             if self._narrow_results:
                 self.results_tabs.setCurrentWidget(self.regions_box)
-            response["message"] = (
-                f"FlexSED: {len(self.events)} событий. Оценки модели требуют проверки прослушиванием."
+            response["message"] = tr(
+                "FlexSED: {v0} events. Listen to review the model predictions.",
+                v0=len(self.events),
             )
 
         self.run_job(
@@ -880,7 +978,7 @@ class MainWindow(W.QMainWindow):
                 threshold=self.event_threshold.value(),
                 channel=self.event_channel.currentData(),
             ),
-            "FlexSED: анализ звуковых событий…",
+            tr("FlexSED: analyzing sound events…"),
             completed,
             self.active()[a:b],
         )
@@ -894,20 +992,30 @@ class MainWindow(W.QMainWindow):
     def update_events(self):
         self.timeline.events = self.events
         self.timeline.update()
-        self.region_tabs.setTabText(1, f"События · {len(self.events)}")
+        bind(
+            self.region_tabs, "setTabText", 1, tr("Events · {v0}", v0=len(self.events))
+        )
         self.event_table.blockSignals(True)
         self.event_table.setRowCount(len(self.events))
         for row, event in enumerate(self.events):
             values = [
                 event["label"],
-                f"{event['start']:.2f} с",
+                tr("{v0:.2f} s", v0=event["start"]),
                 str(event["channel"]),
                 f"{event['score']:.2f}",
             ]
             for col, value in enumerate(values):
-                item = W.QTableWidgetItem(value)
-                item.setToolTip(
-                    f"{event['start']:.3f}–{event['end']:.3f} с · {event['track']} · оценка модели, не гарантия события"
+                item = W.QTableWidgetItem()
+                bind(item, "setText", value)
+                bind(
+                    item,
+                    "setToolTip",
+                    tr(
+                        "{v0:.3f}–{v1:.3f} s · {v2} · model score, not a guarantee of an event",
+                        v0=event["start"],
+                        v1=event["end"],
+                        v2=event["track"],
+                    ),
                 )
                 if col == 0:
                     item.setForeground(G.QColor(event["color"]))
@@ -985,10 +1093,12 @@ class MainWindow(W.QMainWindow):
         self.event_table.blockSignals(True)
         self.event_table.clearSelection()
         self.event_table.blockSignals(False)
-        self.selection_label.setText(
-            f"{start:.3f} → {end:.3f} с  /  {end - start:.3f} с"
+        bind(
+            self.selection_label,
+            "setText",
+            tr("{v0:.3f} → {v1:.3f} s  /  {v2:.3f} s", v0=start, v1=end, v2=end - start)
             if self.selection
-            else "Весь файл"
+            else tr("Whole file"),
         )
         self.timeline.update()
         self.refresh()
@@ -998,7 +1108,7 @@ class MainWindow(W.QMainWindow):
             return
         start, end = self.selection
         if any(start < r.end and end > r.start for r in self.regions):
-            return self.error("Выделение пересекает существующий фрагмент.")
+            return self.error(tr("The selection overlaps an existing region."))
         self.regions.append(Region(start, end))
         self.regions.sort(key=lambda r: r.start)
         self.update_regions()
@@ -1026,12 +1136,12 @@ class MainWindow(W.QMainWindow):
             ]
             if 0 <= region_index < len(self.regions):
                 self.regions[region_index].text = response["text"]
-            response["message"] = (
-                f"Распознавание завершено. Язык: {response['language']}."
+            response["message"] = tr(
+                "Transcription complete. Language: {v0}.", v0=response["language"]
             )
             if response.get("review_count"):
-                response["message"] += (
-                    f" Требуют прослушивания: {response['review_count']}."
+                response["message"] += tr(
+                    " Listen to review: {v0}.", v0=response["review_count"]
                 )
 
         self.run_job(
@@ -1041,7 +1151,7 @@ class MainWindow(W.QMainWindow):
                 "model": self.asr_model.currentText(),
                 "language": self.language.currentData(),
             },
-            "Whisper: распознавание выделенного фрагмента…",
+            tr("Whisper: transcribing the selected fragment…"),
             completed,
             self.active()[a:b],
         )
@@ -1069,7 +1179,7 @@ class MainWindow(W.QMainWindow):
         try:
             self.player.play(self.active(), self.rate, start, b)
         except Exception as exc:
-            self.error(f"Не удалось открыть устройство воспроизведения: {exc}")
+            self.error(tr("Could not open the playback device: {v0}", v0=exc))
 
     def play_selection(self):
         if self.selection:
@@ -1086,7 +1196,11 @@ class MainWindow(W.QMainWindow):
         if self.player.stream is not None:
             self.timeline.cursor = self.player.position / self.rate
             self.timeline.update()
-        self.play_button.setText("Пауза" if self.player.playing else "Пуск")
+        bind(
+            self.play_button,
+            "setText",
+            tr("Silence") if self.player.playing else tr("Play"),
+        )
         self.play_button.setIcon(
             self.style().standardIcon(
                 W.QStyle.StandardPixmap.SP_MediaPause
@@ -1095,7 +1209,7 @@ class MainWindow(W.QMainWindow):
             )
         )
         t = self.timeline.cursor
-        self.clock.setText(f"{int(t // 60):02}:{t % 60:06.3f}")
+        bind(self.clock, "setText", f"{int(t // 60):02}:{t % 60:06.3f}")
 
     def export_audio(self):
         if self.source is None or self.job:
@@ -1108,17 +1222,19 @@ class MainWindow(W.QMainWindow):
         )
         path, _ = W.QFileDialog.getSaveFileName(
             self,
-            "Сохранить активную дорожку / выделение",
+            tr("Save active track / selection"),
             str(Path(self.path).with_name(name)),
             "WAV (*.wav);;FLAC (*.flac);;OGG (*.ogg)",
         )
         if not path:
             return
         if Path(path).resolve() == Path(self.path).resolve():
-            return self.error("Исходный файл защищён. Выберите другое имя.")
+            return self.error(
+                tr("The original file is protected. Choose another name.")
+            )
         self.run_job(
             {"action": "export", "path": path, "rate": self.rate},
-            "Экспорт аудио…",
+            tr("Exporting audio…"),
             lambda *_: None,
             self.active()[a:b],
         )
@@ -1133,14 +1249,16 @@ class MainWindow(W.QMainWindow):
         if path:
             try:
                 if self.path and Path(path).resolve() == Path(self.path).resolve():
-                    raise ValueError("Исходный файл защищён. Выберите другое имя.")
+                    raise ValueError(
+                        tr("The original file is protected. Choose another name.")
+                    )
                 write_text_atomic(path, content)
-                self.message.setText(f"Сохранено: {path}")
+                bind(self.message, "setText", tr("Saved: {v0}", v0=path))
             except (OSError, ValueError) as exc:
                 self.error(str(exc))
 
     def export_text(self):
-        self.write_text("Сохранить текст", "txt", self.transcript.toPlainText())
+        self.write_text(tr("Save text"), "txt", self.transcript.toPlainText())
 
     def export_srt(self):
         def stamp(seconds):
@@ -1152,7 +1270,7 @@ class MainWindow(W.QMainWindow):
             for i, s in enumerate(self.transcript_segments)
         )
         self.write_text(
-            "Сохранить субтитры с таймкодами исходной записи", "srt", body + "\n"
+            tr("Save subtitles with original recording timestamps"), "srt", body + "\n"
         )
 
     def export_regions(self):
@@ -1166,55 +1284,36 @@ class MainWindow(W.QMainWindow):
             "event_analysis": self.event_analysis,
         }
         self.write_text(
-            "Сохранить речевые метки и события",
+            tr("Save speech regions and events"),
             "json",
             json.dumps(data, ensure_ascii=False, indent=2),
         )
 
     def models(self):
-        dialog = W.QDialog(self)
-        dialog.setWindowTitle("Модели VoxLoom")
-        dialog.resize(570, 370)
-        layout = W.QVBoxLayout(dialog)
-        layout.addWidget(label("МОДЕЛИ ДЛЯ РАБОТЫ ОФЛАЙН", "section"))
-        layout.addWidget(label("Silero VAD — поиск речи\nRNNoise — шумоподавление"))
-        installed = []
-        for name in WHISPER_MODELS:
-            present = whisper_ready(name)
-            installed.append(
-                f"Whisper {name}: {'готова' if present else 'не установлена'}"
-            )
-        installed.append(
-            "DeepFilterNet3: "
-            + (
-                "установлена"
-                if (model_directory("DeepFilterNet3") / "config.ini").is_file()
-                else "не установлена"
-            )
-        )
-        from .events import available
+        from .modules import catalog_html
 
-        installed.append(
-            "FlexSED + CLAP: " + ("установлена" if available() else "не установлена")
+        dialog = W.QDialog(self)
+        dialog.setWindowTitle(tr("VoxLoom models"))
+        layout = W.QVBoxLayout(dialog)
+        browser = W.QTextBrowser()
+        browser.setOpenExternalLinks(True)
+        browser.document().setDefaultStyleSheet("a { color: #75dfca; }")
+        browser.setHtml(catalog_html())
+        layout.addWidget(browser, 1)
+        folder = label(
+            tr("Models folder: {path}", path=str(writable_models())), "muted"
         )
-        layout.addWidget(label("\n".join(installed)))
-        description = label(
-            "В компактной версии модели устанавливаются отдельно из ZIP-пакетов GitHub Releases. После установки интернет не требуется. Base — быстрый черновик, small — баланс, turbo — более мощное распознавание. Spectral Gate, RNNoise и Silero VAD доступны сразу.",
-            "muted",
-        )
-        description.setWordWrap(True)
-        layout.addWidget(description)
-        install = self.button("Установить пакет…", lambda: self.install_models(dialog))
+        folder.setWordWrap(True)
+        folder.setTextInteractionFlags(C.Qt.TextInteractionFlag.TextSelectableByMouse)
+        layout.addWidget(folder)
+        actions = W.QHBoxLayout()
+        install = self.button(tr("Install pack…"), lambda: self.install_models(dialog))
         install.setEnabled(self.job is None)
-        layout.addWidget(install)
-        layout.addWidget(self.button("Закрыть", dialog.accept))
-        license_note = label(
-            "VoxLoom Studio — GPLv3. Разрешены использование, изменение и распространение по условиям лицензии. Без гарантий. Лицензии компонентов — в папке licenses.",
-            "muted",
-        )
-        license_note.setWordWrap(True)
-        layout.addWidget(license_note)
-        dialog.resize(dialog.size().boundedTo(self.screen().availableGeometry().size()))
+        actions.addWidget(install)
+        actions.addWidget(self.button(tr("Close"), dialog.accept))
+        layout.addLayout(actions)
+        available = self.screen().availableGeometry().size() - C.QSize(32, 48)
+        dialog.resize(C.QSize(760, 600).boundedTo(available))
         dialog.exec()
 
     def install_models(self, dialog=None):
@@ -1222,7 +1321,7 @@ class MainWindow(W.QMainWindow):
             return
         paths, _ = W.QFileDialog.getOpenFileNames(
             self,
-            "Выберите пакеты моделей VoxLoom из GitHub Releases",
+            tr("Select VoxLoom model packs from GitHub Releases"),
             "",
             "VoxLoom model packs (*.zip)",
         )
@@ -1232,7 +1331,7 @@ class MainWindow(W.QMainWindow):
             dialog.accept()
         self.run_job(
             {"action": "install_models", "paths": paths},
-            "Проверка и установка моделей…",
+            tr("Checking and installing models…"),
             lambda *_: None,
         )
 

@@ -4,9 +4,25 @@ import sys
 from pathlib import Path
 
 import numpy as np
+import pytest
 import soundfile as sf
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+@pytest.mark.parametrize(
+    "code, expected",
+    [
+        ("en", "Select between one and five model packs."),
+        ("ru", "Выберите от одного до пяти пакетов моделей."),
+    ],
+)
+def test_worker_uses_explicit_interface_language(tmp_path, code, expected):
+    done, result = run_job(
+        tmp_path, {"action": "install_models", "paths": [], "ui_language": code}
+    )
+    assert done.returncode == 1
+    assert result["error"] == expected
 
 
 def run_job(tmp_path, request):

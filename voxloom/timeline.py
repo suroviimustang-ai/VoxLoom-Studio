@@ -7,6 +7,9 @@ from PyQt6 import QtCore as C
 from PyQt6 import QtGui as G
 from PyQt6 import QtWidgets as W
 
+from .i18n import tr
+from .ui_language import bind
+
 
 class Timeline(W.QWidget):
     selectionChanged = C.pyqtSignal(float, float)
@@ -32,8 +35,12 @@ class Timeline(W.QWidget):
         self.anchor = None
         self.pan_anchor = None
         self.amplitude = 1.0
-        self.setToolTip(
-            "Перетаскивание — выделение • Ctrl + колесо — масштаб • колесо — прокрутка • двойной щелчок — весь файл"
+        bind(
+            self,
+            "setToolTip",
+            tr(
+                "Drag to select • Ctrl + wheel to zoom • wheel to scroll • double-click to fit"
+            ),
         )
 
     def set_audio(self, original, processed, rate):
@@ -97,7 +104,9 @@ class Timeline(W.QWidget):
             p.drawText(
                 self.rect(),
                 C.Qt.AlignmentFlag.AlignCenter,
-                "Откройте аудиозапись\n\nWAV · FLAC · MP3 · OGG · AAC · M4A\n\nили перетащите файл в окно",
+                tr(
+                    "Open an audio recording\n\nWAV · FLAC · MP3 · OGG · AAC · M4A\n\nor drop a file into this window"
+                ),
             )
             return
         track_height = (height - 38) / 2
@@ -116,8 +125,8 @@ class Timeline(W.QWidget):
             tick += step
         for i, (title, subtitle, color) in enumerate(
             [
-                ("01  ORIGINAL", "Исходная запись", "#758aa6"),
-                ("02  RESTORED", "Результат", "#5bdac6"),
+                ("01  ORIGINAL", tr("Original recording"), "#758aa6"),
+                ("02  RESTORED", tr("Result"), "#5bdac6"),
             ]
         ):
             top = 36 + i * track_height
@@ -132,7 +141,7 @@ class Timeline(W.QWidget):
                 round(top + 66),
                 f"{self.data[i].shape[1]} ch"
                 if self.data[i] is not None
-                else "Ожидает обработки",
+                else tr("Waiting for processing"),
             )
             p.setPen(G.QColor("#344050"))
             p.drawLine(130, round(mid), width - 14, round(mid))
@@ -146,7 +155,7 @@ class Timeline(W.QWidget):
                     C.QRectF(a, top, max(1, b - a), track_height - 3),
                     G.QColor(54, 200, 154, 40),
                 )
-                caption = f"Речь {index + 1:02}"
+                caption = tr("Speech {v0:02}", v0=index + 1)
                 label_left = max(a, 130) + 5
                 # Short neighbouring regions must not paint over each other's labels.
                 if (

@@ -8,6 +8,7 @@ import math
 import numpy as np
 
 from .audio import resample, validate
+from .i18n import tr
 from .processing import model_directory
 
 FRAME_RATE = 25
@@ -19,7 +20,9 @@ def parse_queries(text: str) -> list[str]:
         dict.fromkeys(part.strip() for part in text.split(";") if part.strip())
     )
     if not 1 <= len(queries) <= 6 or any(len(q) > 120 for q in queries):
-        raise ValueError("Введите 1–6 событий через «;», каждое до 120 символов.")
+        raise ValueError(
+            tr("Enter 1–6 events separated by semicolons, up to 120 characters each.")
+        )
     return queries
 
 
@@ -50,9 +53,9 @@ def score_regions(
     """Merge frame runs without moving the final partial frame beyond the audio."""
     scores = np.asarray(scores, dtype=np.float32)
     if scores.ndim != 1 or not np.isfinite(scores).all():
-        raise ValueError("Некорректные оценки FlexSED.")
+        raise ValueError(tr("Invalid FlexSED scores."))
     if not math.isfinite(duration) or duration <= 0 or not 0.05 <= threshold <= 0.95:
-        raise ValueError("Некорректная длительность или порог событий.")
+        raise ValueError(tr("Invalid event duration or threshold."))
     mask = scores >= threshold
     edges = np.diff(np.pad(mask.astype(np.int8), (1, 1)))
     runs = list(zip(np.flatnonzero(edges == 1), np.flatnonzero(edges == -1)))
@@ -83,7 +86,9 @@ class FlexSED:
     def __init__(self, queries):
         if not available():
             raise RuntimeError(
-                "Веса FlexSED / CLAP не установлены. Установите пакет FlexSED через «Модели → Установить пакет»."
+                tr(
+                    "FlexSED / CLAP weights are missing. Install the FlexSED pack via Models → Install pack."
+                )
             )
         import torch
         from transformers import ClapTextModelWithProjection, RobertaTokenizerFast
@@ -134,9 +139,9 @@ class FlexSED:
 
         data = validate(data, rate)
         if not isinstance(channel, int) or not 0 <= channel <= data.shape[1]:
-            raise ValueError("Выберите существующий канал.")
+            raise ValueError(tr("Select an existing channel."))
         if not 0.05 <= threshold <= 0.95:
-            raise ValueError("Порог событий должен быть от 0.05 до 0.95.")
+            raise ValueError(tr("The event threshold must be between 0.05 and 0.95."))
         duration = len(data) / rate
         channels = range(data.shape[1]) if channel == 0 else [channel - 1]
         regions, curves = [], []
@@ -166,7 +171,7 @@ class FlexSED:
                         scores.shape != (len(self.queries), count)
                         or not np.isfinite(scores).all()
                     ):
-                        raise RuntimeError("Неожиданный выход FlexSED.")
+                        raise RuntimeError(tr("Unexpected FlexSED output."))
                     blocks.append(scores)
                 scores = np.concatenate(blocks, axis=1)
                 for index, query in enumerate(self.queries):

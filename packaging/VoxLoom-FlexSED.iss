@@ -1,4 +1,4 @@
-#define AppVersion "0.3.0"
+#define AppVersion "0.4.0"
 [Setup]
 AppId={{E7154787-0A29-47F9-AC3F-031CA0F2C83A}
 AppName=VoxLoom Studio
@@ -17,13 +17,14 @@ Compression=lzma2/fast
 SolidCompression=yes
 WizardStyle=modern
 CloseApplications=yes
+LanguageDetectionMethod=none
 
 [Languages]
-Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "Создать ярлык на рабочем столе"; Flags: unchecked
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; Flags: unchecked
 
 [Files]
 Source: "..\dist-flexsed\VoxLoom\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -33,4 +34,4 @@ Name: "{group}\VoxLoom Studio"; Filename: "{app}\VoxLoom.exe"
 Name: "{autodesktop}\VoxLoom Studio"; Filename: "{app}\VoxLoom.exe"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\VoxLoom.exe"; Description: "Открыть VoxLoom Studio"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\VoxLoom.exe"; Description: "{cm:LaunchProgram,VoxLoom Studio}"; Flags: nowait postinstall skipifsilent

@@ -19,7 +19,7 @@ def segment(text, **overrides):
 def test_repeated_hallucination_is_not_exported_as_speech():
     result = review_segment(segment("Я не могу сказать, " * 8), 5.0)
     assert result["needs_review"] and "repetition" in result["review_reasons"]
-    assert result["text"].startswith("[неразборчиво")
+    assert result["text"].startswith("[unintelligible")
     assert result["candidate_text"].startswith("Я не могу")
 
 

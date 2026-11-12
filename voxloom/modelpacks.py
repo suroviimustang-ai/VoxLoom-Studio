@@ -14,6 +14,7 @@ import zipfile
 from pathlib import Path, PurePosixPath
 
 from .files import write_text_atomic
+from .i18n import tr
 
 
 def load_catalog() -> dict:
@@ -58,14 +59,14 @@ def install_pack(
         names = [member.filename for member in members]
         if len(set(names)) != len(names) or "pack.json" not in names:
             raise ValueError(
-                "Некорректный пакет моделей: повторяющиеся файлы или нет описания."
+                tr("Invalid model pack: duplicate files or missing manifest.")
             )
         header = zf.getinfo("pack.json")
         if header.file_size > 65536:
-            raise ValueError("Описание пакета моделей слишком велико.")
+            raise ValueError(tr("The model pack manifest is too large."))
         metadata = json.loads(zf.read(header))
         if not isinstance(metadata, dict):
-            raise ValueError("Некорректное описание пакета моделей.")
+            raise ValueError(tr("Invalid model pack manifest."))
         name = metadata.get("model")
         if (
             metadata.get("schema") != 1
@@ -73,12 +74,12 @@ def install_pack(
             or name not in catalog
         ):
             raise ValueError(
-                "Этот пакет моделей не поддерживается данной версией VoxLoom."
+                tr("This model pack is not supported by this version of VoxLoom.")
             )
         expected = catalog[name]["files"]
         if set(names) != {"pack.json", *expected}:
             raise ValueError(
-                "Состав пакета не совпадает с проверенным каталогом моделей."
+                tr("The pack contents do not match the trusted model catalog.")
             )
         for member in members:
             path = PurePosixPath(member.filename)
@@ -91,17 +92,19 @@ def install_pack(
                 or stat.S_ISLNK(member.external_attr >> 16)
                 or member.flag_bits & 1
             ):
-                raise ValueError("Недопустимый путь или тип файла в пакете моделей.")
+                raise ValueError(tr("Invalid path or file type in the model pack."))
             if (
                 member.filename != "pack.json"
                 and member.file_size != expected[member.filename]["bytes"]
             ):
-                raise ValueError("Размер файла модели не совпадает с каталогом.")
+                raise ValueError(tr("The model file size does not match the catalog."))
         parent = models_root / name
         parent.mkdir(parents=True, exist_ok=True)
         required = sum(item["bytes"] for item in expected.values())
         if shutil.disk_usage(parent).free < required + 64 * 1024**2:
-            raise OSError("Недостаточно места для установки пакета моделей.")
+            raise OSError(
+                tr("There is not enough free space to install the model pack.")
+            )
         revision = "revision-" + uuid.uuid4().hex
         destination = parent / revision
         with tempfile.TemporaryDirectory(
@@ -117,11 +120,13 @@ def install_pack(
                     while chunk := source.read(1024**2):
                         length += len(chunk)
                         if length > spec["bytes"]:
-                            raise ValueError("Превышен допустимый размер файла модели.")
+                            raise ValueError(
+                                tr("The model file exceeds the allowed size.")
+                            )
                         checksum.update(chunk)
                         output.write(chunk)
                 if length != spec["bytes"] or checksum.hexdigest() != spec["sha256"]:
-                    raise ValueError(f"Контрольная сумма модели не совпала: {filename}")
+                    raise ValueError(tr("Model checksum mismatch: {v0}", v0=filename))
             os.replace(stage, destination)
             try:
                 write_text_atomic(

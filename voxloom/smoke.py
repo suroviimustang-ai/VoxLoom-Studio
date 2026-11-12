@@ -33,6 +33,13 @@ def run(app, window, fixture, destination):
         )
         window.grab().save(str(root / "startup-workspace.png"))
         checks.append("screen-sized-startup")
+        from .i18n import language
+        from .modules import catalog_html
+
+        assert language() == "en" and window.open_button.text() == "Open audio"
+        checks.append("english-first-launch")
+        assert catalog_html().count("releases/download/") == 5
+        checks.append("complete-model-download-catalog")
         from .processing import WHISPER_MODELS, whisper_ready
 
         assert all(whisper_ready(name) for name in WHISPER_MODELS), (
@@ -86,6 +93,16 @@ def run(app, window, fixture, destination):
         transcript = window.transcript.toPlainText()
         assert "speech" in transcript.lower(), transcript
         checks.append("whisper-small")
+        selection = window.selection
+        for code, expected in (("ru", "Открыть аудио"), ("en", "Open audio")):
+            window.ui_language.setCurrentIndex(window.ui_language.findData(code))
+            app.processEvents()
+            assert window.open_button.text() == expected
+            assert window.selection == selection
+            assert window.transcript.toPlainText() == transcript
+            assert window.language.currentData() == "en"
+            np.testing.assert_array_equal(window.source, original)
+        checks.append("live-language-switch-preserves-session")
         app.processEvents()
         window.grab().save(str(root / "release-ui.png"))
         window.select_range(0, 0)

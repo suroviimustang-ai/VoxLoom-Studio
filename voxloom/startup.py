@@ -10,6 +10,7 @@ from PyQt6 import QtGui as G
 from PyQt6 import QtWidgets as W
 
 from . import __version__
+from .i18n import tr
 
 
 def assets_root():
@@ -72,7 +73,9 @@ class StartupSplash(W.QSplashScreen):
         font.setPixelSize(18)
         painter.setFont(font)
         painter.setPen(G.QColor("#bfccdf"))
-        painter.drawText(C.QRectF(44, 177, 540, 35), "Очистка звука. Речь. Текст.")
+        painter.drawText(
+            C.QRectF(44, 177, 540, 35), tr("Clean audio. Find speech. Get text.")
+        )
         painter.setPen(G.QPen(G.QColor("#2d4055"), 1))
         painter.drawLine(44, 280, 576, 280)
         painter.setPen(G.QPen(G.QColor("#75dfca"), 2))
@@ -87,7 +90,7 @@ class StartupSplash(W.QSplashScreen):
         super().__init__(screen, canvas)
         self.setAttribute(C.Qt.WidgetAttribute.WA_TranslucentBackground)
         self.move(screen.availableGeometry().center() - self.rect().center())
-        self.set_status("Подготовка студии…")
+        self.set_status(tr("Preparing the studio…"))
 
     def set_status(self, message):
         self.showMessage(

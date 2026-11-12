@@ -6,6 +6,8 @@ import sys
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
+from .i18n import tr
+
 LOG = logging.getLogger("voxloom")
 LOG.addHandler(logging.NullHandler())
 
@@ -53,10 +55,12 @@ def install_exception_handler(app, log_path):
             return
         reporting = True
         try:
-            text = "Не удалось завершить действие. Сохраните результаты и перезапустите программу."
+            text = tr(
+                "The action could not be completed. Save your results and restart the application."
+            )
             if log_path:
-                text += f"\n\nДиагностика: {log_path}"
-            QMessageBox.critical(app.activeWindow(), "VoxLoom · ошибка", text)
+                text += tr("\n\nDiagnostic log: {v0}", v0=log_path)
+            QMessageBox.critical(app.activeWindow(), tr("VoxLoom · error"), text)
         finally:
             reporting = False
 

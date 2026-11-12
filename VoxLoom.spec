@@ -5,6 +5,7 @@ from importlib.metadata import distribution
 from pathlib import Path
 
 from PyInstaller.utils.hooks import collect_all, collect_data_files, copy_metadata
+from PyQt6.QtCore import QLibraryInfo
 
 root = Path(SPECPATH).resolve()
 app_version = tomllib.loads((root / "pyproject.toml").read_text("utf-8"))["project"][
@@ -32,13 +33,21 @@ for required in required_assets:
 datas = [
     (str(root / "assets"), "assets"),
     (str(root / "README.md"), "."),
-    (str(root / "README.ru.md"), "."),
     (str(root / "THIRD_PARTY_NOTICES.md"), "."),
     (str(root / "LICENSE"), "."),
     (str(root / "docs/ARCHITECTURE.md"), "docs"),
     (str(root / "docs/RELEASING.md"), "docs"),
     (str(root / "docs/BUILDING.md"), "docs"),
     (str(root / "docs/LICENSES.md"), "docs"),
+    (str(root / "docs/MODULES.md"), "docs"),
+    (str(root / "docs/DOWNLOADS.md"), "docs"),
+    (
+        str(
+            Path(QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath))
+            / "qtbase_ru.qm"
+        ),
+        "PyQt6/Qt6/translations",
+    ),
 ]
 rnnoise_name = {
     "win32": "rnnoise.dll",

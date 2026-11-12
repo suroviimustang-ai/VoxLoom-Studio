@@ -100,7 +100,7 @@ def test_symlink_model_rejected(tmp_path):
     with zipfile.ZipFile(archive, "w") as zf:
         zf.writestr("pack.json", json.dumps({"schema": 1, "model": "whisper-base"}))
         zf.writestr(info, b"verified model")
-    with pytest.raises(ValueError, match="тип"):
+    with pytest.raises(ValueError, match="file type"):
         modelpacks.install_pack(
             archive, catalog=catalog, models_root=tmp_path / "models"
         )

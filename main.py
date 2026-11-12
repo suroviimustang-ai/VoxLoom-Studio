@@ -3,6 +3,8 @@ from __future__ import annotations
 import os
 import sys
 
+from voxloom.i18n import tr
+
 for variable in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
     os.environ.setdefault(variable, "2")
 
@@ -40,6 +42,9 @@ def main():
     app.setApplicationName("VoxLoom Studio")
     app.setOrganizationName("MatSoftAI")
     app.setStyle("Fusion")
+    from voxloom.ui_language import initialize
+
+    initialize(app)
     from voxloom.diagnostics import configure_logging, install_exception_handler
 
     log_path = configure_logging()
@@ -59,7 +64,7 @@ def main():
     from voxloom.window import MainWindow
 
     window = MainWindow()
-    splash.set_status("Открытие рабочего пространства…")
+    splash.set_status(tr("Opening the workspace…"))
     show_workspace(window, screen)
     splash.finish(window)
     if "--smoke-test" in sys.argv:

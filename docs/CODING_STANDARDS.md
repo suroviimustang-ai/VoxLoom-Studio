@@ -1,6 +1,5 @@
 # VoxLoom coding standards
 
-**English** | [Русский](CODING_STANDARDS.ru.md)
 
 These rules apply to application-owned code, tests, analysis scripts and build tools.
 Generated results, builds, environments and weights are excluded.

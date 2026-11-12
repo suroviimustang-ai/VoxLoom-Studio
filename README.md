@@ -4,7 +4,6 @@
 
 <h1 align="center">VoxLoom Studio</h1>
 
-<p align="center"><strong>English</strong> | <a href="README.ru.md">Русский</a></p>
 
 <p align="center">
   Restore audio, find speech and transcribe selected passages — on your own computer.
@@ -13,6 +12,7 @@
 <p align="center">
   <a href="docs/DOWNLOADS.md">Download &amp; install</a> ·
   <a href="docs/BUILDING.md">Build the app</a> ·
+  <a href="docs/MODULES.md">All modules</a> ·
   <a href="#features">Features</a> ·
   <a href="docs/ARCHITECTURE.md">Architecture</a> ·
   <a href="CONTRIBUTING.md">Contribute</a> ·
@@ -27,25 +27,23 @@
 
 ## First launch
 
-1. Download the app for your system: [Windows EXE](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.3.0/VoxLoom-Studio-0.3.0-windows-x64.exe), [Ubuntu AppImage](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.3.0/VoxLoom-Studio-0.3.0-linux-x86_64.AppImage), or [macOS Apple Silicon DMG](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.3.0/VoxLoom-Studio-0.3.0-macos-arm64.dmg).
+1. Download the app for your system: [Windows EXE](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.4.0/VoxLoom-Studio-0.4.0-windows-x64.exe), [Ubuntu AppImage](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.4.0/VoxLoom-Studio-0.4.0-linux-x86_64.AppImage), or [macOS Apple Silicon DMG](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.4.0/VoxLoom-Studio-0.4.0-macos-arm64.dmg).
 2. For your first transcript, download [Whisper Small — ZIP, 448 MB](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.3.0/VoxLoom-Models-whisper-small-v1.zip). For neural speech cleanup, optionally add [DeepFilterNet3 — ZIP, 8 MB](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.3.0/VoxLoom-Models-DeepFilterNet3-v1.zip).
-3. Launch VoxLoom and choose **Модели → Установить пакет…** (Models → Install pack). Select the downloaded ZIP files without unpacking them.
+3. Launch VoxLoom and choose **Models → Install pack…**. Select the downloaded ZIP files without unpacking them.
 
-**[Step-by-step guide: from installation to your first transcript](docs/DOWNLOADS.md).**
-No separate Python, Git, API keys or dedicated graphics card are required. In 0.3.0,
+**[Step-by-step installation guide](docs/DOWNLOADS.md) · [All modules: downloads and activation](docs/MODULES.md).**
+No separate Python, Git, API keys or dedicated graphics card are required. In 0.4.0,
 download model packs manually using the links; the app verifies and installs them.
 
 ![VoxLoom workspace: original and processed tracks, speech regions and transcript](assets/screenshots/workspace.png)
 
-*VoxLoom 0.2.2 at 1366×768. The synthetic waveform and sample text illustrate the
-interface, not recognition accuracy. The desktop interface is currently in Russian;
-the language links above switch the documentation.*
+*VoxLoom 0.4.0 with English UI. The synthetic waveform and sample text illustrate
+the interface, not recognition accuracy.*
 
 **Compact apps and separate model packs are distributed through
 [GitHub Releases](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases).**
 Choose a Windows EXE installer, Linux AppImage or Apple Silicon macOS DMG, then
-install the models you need through **Модели → Установить пакет** (Models → Install
-pack). See the [download guide](docs/DOWNLOADS.md). Source history contains code and
+install the models you need through **Models → Install pack**. See the [download guide](docs/DOWNLOADS.md). Source history contains code and
 build instructions; binaries and weights are release assets. After model setup,
 audio processing works offline.
 
@@ -85,20 +83,23 @@ The full model-bundled build remains available for users building from source.
 
 ## Workflow
 
-The Russian control labels are included below so you can find them in the app.
+The interface starts in **English** on every supported operating system. Select
+**Русский** in the top bar to switch immediately; your choice is saved for later
+launches. This setting is independent of the spoken language selected for Whisper.
+Documentation is maintained in English.
 
 1. Open a recording with the open button or drag a file into the window.
 2. Choose A/B as the input for playback and subsequent processing.
-3. In **Очистка** (Clean), choose a method and strength. Capture a noise profile
+3. In **Cleanup**, choose a method and strength. Capture a noise profile
    from a pause without speech when using profile-based reduction.
-4. Use **Речь → Найти речь** (Speech → Find speech), or enter English event prompts
-   in **События** (Events), such as `Speech; Conversation; Whispering`. These prompts
+4. Use **Speech → Find speech on track**, or enter English event prompts
+   in **Events**, such as `Speech; Conversation; Whispering`. These prompts
    can also find events in recordings containing Russian speech.
 5. Select a region or drag over the timeline, listen to it, and transcribe it.
 6. Export audio, text or regions. Text edits are saved to TXT; SRT preserves the
    model's original segments with timestamps on the recording's timeline.
 
-Open **Уровень** (Level) for normalization. On short windows, spacing contracts and
+Open **Level** for normalization. On short windows, spacing contracts and
 additional explanations appear in tooltips. Hover over truncated filenames and
 status messages to read them in full.
 
@@ -147,7 +148,7 @@ The local Windows installer pipeline (`build.ps1`) requires Inno Setup 6 and an
 English Windows SAPI voice for its speech fixture. It checks mandatory weights,
 DLL imports, the frozen executable, codecs, VAD, denoisers, FlexSED and all three
 Whisper models without downloading models at runtime.
-Full installer output: `release/VoxLoom-Studio-Setup-0.3.0-Offline-win-x64.exe`.
+Full installer output: `release/VoxLoom-Studio-Setup-0.4.0-Offline-win-x64.exe`.
 The same pipeline's portable output is `dist-flexsed/VoxLoom/VoxLoom.exe`;
 keep the entire directory.
 

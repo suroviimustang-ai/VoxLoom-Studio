@@ -1,5 +1,5 @@
 #ifndef AppVersion
-  #define AppVersion "0.3.0"
+  #define AppVersion "0.4.0"
 #endif
 #ifndef BundleDir
   #define BundleDir "..\dist-native\VoxLoom"
@@ -22,6 +22,7 @@ Compression=lzma2/fast
 SolidCompression=yes
 WizardStyle=modern
 CloseApplications=yes
+LanguageDetectionMethod=none
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

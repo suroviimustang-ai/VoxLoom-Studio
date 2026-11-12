@@ -41,8 +41,13 @@
   },
   {
     "path": "assets/screenshots/workspace.png",
-    "bytes": 70733,
-    "sha256": "3ace5352bf78e3a9b1446eb134e768a7e76873bb40cd64c0b24e8cc3d9428a52"
+    "bytes": 68283,
+    "sha256": "191a2944f77950a75d36b7d35f83cb9130b5e50fdc04005e733aa4c7fc9341cf"
+  },
+  {
+    "path": "assets/translations/ru.json",
+    "bytes": 26513,
+    "sha256": "7a54178d35790674ff13d24c2f78fd63d5d35335221df956ad1a74f0e1b07aab"
   },
   {
     "path": "assets/voxloom.icns",
@@ -76,8 +81,8 @@
   },
   {
     "path": "CHANGELOG.md",
-    "bytes": 1986,
-    "sha256": "4c0f6a81b8355c8f05547b76572441f690d5ae2ff597cfc134e652f7e582c963"
+    "bytes": 2437,
+    "sha256": "109c0c6b67968b6ab79750c1e9dda08f278abfcc02d92930d14370c7da6a38e4"
   },
   {
     "path": "CONTRIBUTING.md",
@@ -86,63 +91,48 @@
   },
   {
     "path": "docs/ARCHITECTURE.md",
-    "bytes": 1630,
-    "sha256": "dd1dd7e897e7c4c5d48ebd03a5cfb5a1f207e037d797339ff00c60636c05ce67"
+    "bytes": 1657,
+    "sha256": "e9155ef9d2dfa77aa098ef402902ac38457acc182384b833ab71e83415d88b6a"
   },
   {
     "path": "docs/BUILDING.md",
-    "bytes": 8643,
-    "sha256": "ec5cdbac3966c71a9c3e103570f8d2af3ad44fb4e0477e94d80737a9fe8d3ccd"
-  },
-  {
-    "path": "docs/BUILDING.ru.md",
-    "bytes": 12430,
-    "sha256": "012fd63a2a2673b8ca7c03f55c6cf902bb82c443a5d7efaf533040cf335520f3"
+    "bytes": 8875,
+    "sha256": "c1fd8e605f80f70adc0007e01be5ba592f12bdf1fe8c86128130b9a3070265ee"
   },
   {
     "path": "docs/CODING_STANDARDS.md",
-    "bytes": 3359,
-    "sha256": "53797ed86e32fcd344c07a0d8d991517942c1fee2036878e8de0371848ed3dd3"
-  },
-  {
-    "path": "docs/CODING_STANDARDS.ru.md",
-    "bytes": 5369,
-    "sha256": "0772cb95f0865b61f29428b676ddb4a954b5053a487f122781e5cb0186962e05"
+    "bytes": 3378,
+    "sha256": "9e3043e7f9a0f0f31321e61b168aaaa440dd06ab445326c3d07fe0ec4ede4fa6"
   },
   {
     "path": "docs/DOWNLOADS.md",
-    "bytes": 7775,
-    "sha256": "11b16bb877eac55cc706cc77939d86f864eeb46da12a77491eaedffaa4b1b592"
-  },
-  {
-    "path": "docs/DOWNLOADS.ru.md",
-    "bytes": 11507,
-    "sha256": "ce3bab6c2a0d287c988839485854c3bccb5d799cf5cc32f0c6999efac2cf8927"
+    "bytes": 8183,
+    "sha256": "b85b25cfd77b5b9057e72719995e5a6de09842bf921f039c6cc4314f652e4bc5"
   },
   {
     "path": "docs/LICENSES.md",
-    "bytes": 2442,
-    "sha256": "822caaa394a824b7e4901ca535a0edc431c28de5c5cc327bd7c05f7a2026d420"
+    "bytes": 2483,
+    "sha256": "0f743ef84408c09ef5fbdb935f954c81d627417603dfc78466b2b9d399923061"
+  },
+  {
+    "path": "docs/MODULES.md",
+    "bytes": 8081,
+    "sha256": "e23303c20fbefd66a576eb53de485158509b2505e1b7d21ce79e758ea800bf06"
   },
   {
     "path": "docs/PUBLISHING.md",
-    "bytes": 3406,
-    "sha256": "205b38fa0565d91991e0919d60d62e377df632286543936b4927ba84b8af5e9f"
-  },
-  {
-    "path": "docs/PUBLISHING.ru.md",
-    "bytes": 5971,
-    "sha256": "fd90fe35ae9963f98ea90a15e32b138e5c55d0032d86559402400d941c3e1733"
+    "bytes": 3430,
+    "sha256": "cb6f5144fa230189afc887680a727f2c5fabd89f34281a2e21f65c18b4b90c7a"
   },
   {
     "path": "docs/RELEASE_NOTES.md",
-    "bytes": 1850,
-    "sha256": "63f1c399a62c73925aea671c4b0c7972b1869f120eb100b062f55eba91b0179e"
+    "bytes": 1654,
+    "sha256": "3bfc4797e73f04b489f1fb2eefc259e43c3b6f249b3f4aa1a84fdb4a879b2e25"
   },
   {
     "path": "docs/RELEASING.md",
-    "bytes": 2829,
-    "sha256": "1dd60686a24ff9390ce754383ee7f5488c600f63aa2a44f3f2f92a5c616d7724"
+    "bytes": 2881,
+    "sha256": "5c25bc6586b50efbc5f4f2d7c8027c6c4d339847988f2dbd88f0813b2eaafe3a"
   },
   {
     "path": "LICENSE",
@@ -706,8 +696,8 @@
   },
   {
     "path": "main.py",
-    "bytes": 2519,
-    "sha256": "46ffd02f9d96df04ca595a784f68cc96c29dcd0aea06e76f0f03d07d44b13857"
+    "bytes": 2583,
+    "sha256": "2f67ebc73f58a3d08c8eadd231df6d152ac46b378991373719c80a89e2c8cef0"
   },
   {
     "path": "model-sources.json",
@@ -721,13 +711,13 @@
   },
   {
     "path": "packaging/VoxLoom-Compact.iss",
-    "bytes": 1300,
-    "sha256": "3b1a76cd764272cc32a3714b6c192a967f56c23a7a989698d7c525dac0968a07"
+    "bytes": 1371,
+    "sha256": "e46962d90869603f80c25c1ba097f73da9ee62410b14706cddc22b3f61c2b6fb"
   },
   {
     "path": "packaging/VoxLoom-FlexSED.iss",
-    "bytes": 1246,
-    "sha256": "6a2c25aa6dd6150b0fab94664516e83ca5d7ad070a2a1721db6f0be99d2a4625"
+    "bytes": 1282,
+    "sha256": "7bc2f4220e249d7df62015f62a8f167695b411f882e2a22cfffa88ce6f2f8c1f"
   },
   {
     "path": "PSScriptAnalyzerSettings.psd1",
@@ -736,18 +726,13 @@
   },
   {
     "path": "pyproject.toml",
-    "bytes": 1074,
-    "sha256": "1e0eee7f61e35d2eb31053fe28f19a079d5d65f5697a4e8bb13ff406cfc7cbf8"
+    "bytes": 1115,
+    "sha256": "9803409d92e43f8d05356dafbaff34b429ca6af062cfba77065ff374385998bd"
   },
   {
     "path": "README.md",
-    "bytes": 10759,
-    "sha256": "fea68a47927101a57ec3572a674b4e0a69465ebbc99affbef26b3798025fca74"
-  },
-  {
-    "path": "README.ru.md",
-    "bytes": 14424,
-    "sha256": "6113e5313d60708ff6abb6fc0670af6edd432dc6d6dfd110ce91d1135e1e42f6"
+    "bytes": 10875,
+    "sha256": "b7e5c8278ce7597dec19c9c96b434aa3a836322954fe6ff57d28b7e239fc1275"
   },
   {
     "path": "requirements-dev.txt",
@@ -805,14 +790,19 @@
     "sha256": "06fade4b3a2ab9c8d151dd1990cf5d67962c4bcb83d8c1c380a2db5447037ed9"
   },
   {
+    "path": "tests/test_i18n.py",
+    "bytes": 2729,
+    "sha256": "05859fdc49b51a872144a1a2111cdfd674f3a2a01734c4b529b90d1e6498ecec"
+  },
+  {
     "path": "tests/test_modelpacks.py",
-    "bytes": 4975,
-    "sha256": "1d673441b8f78590e4a8c352ba620ad46262f6bd9141b0789a40e4de902070bf"
+    "bytes": 4978,
+    "sha256": "888002f4080748e74b8e196843ee291ab5b167e7e198bdf6c1190d2fef500f1c"
   },
   {
     "path": "tests/test_offline_models.py",
-    "bytes": 1019,
-    "sha256": "9d7da3b52c591037bbdb81fc158884ae19a107c2fce0ec2f1f4fd4c52d640b8a"
+    "bytes": 1004,
+    "sha256": "c43193325dfe2ccc520964e0b0650f55ae773524718c8dd547968a5c819fc663"
   },
   {
     "path": "tests/test_platforms.py",
@@ -826,13 +816,13 @@
   },
   {
     "path": "tests/test_speech_review.py",
-    "bytes": 1792,
-    "sha256": "4d40fd9aae45da4125803e49f7eb79cdc73f748efa107e31c9687819a852bc0d"
+    "bytes": 1782,
+    "sha256": "6402d23aea9cafcc4b9db819bf5a7c8ecf22a34b28b6c8b9cd4f68d35bdd010f"
   },
   {
     "path": "tests/test_worker.py",
-    "bytes": 1590,
-    "sha256": "108b016966b9d4ffe94f59127537c13177b6039d90c5227413df3eac4c143677"
+    "bytes": 2090,
+    "sha256": "f8bda19f567e069c58c3948eb9c0916b34bfc9e09fc9f19eb7a69e3da4108667"
   },
   {
     "path": "tests/test_worker_streams.py",
@@ -843,11 +833,6 @@
     "path": "THIRD_PARTY_NOTICES.md",
     "bytes": 2378,
     "sha256": "2ff45cc7ba66879639be939161534ab0621266bd947827d6837d3b7c09248bea"
-  },
-  {
-    "path": "THIRD_PARTY_NOTICES.ru.md",
-    "bytes": 2923,
-    "sha256": "cdd06b567a56c9a31bfb0b8660ed21a39ac41e69f05879190f2268441ed15dd7"
   },
   {
     "path": "tools/build_model_packs.py",
@@ -876,8 +861,8 @@
   },
   {
     "path": "tools/check_startup.py",
-    "bytes": 8881,
-    "sha256": "4e7cadf55751028791dbdce882313757b954a188d70f3f0b04a63ccf07f659a8"
+    "bytes": 10917,
+    "sha256": "53c9b19d01595dfcf789e2e06e9db84dbe693729049cc2a77bc2035fdb771b64"
   },
   {
     "path": "tools/check_style.py",
@@ -901,8 +886,8 @@
   },
   {
     "path": "tools/export_public.py",
-    "bytes": 5003,
-    "sha256": "a878f6d2e69b685916fe9fd9001738c385a77764f6ade5d015d30684d30cf551"
+    "bytes": 4869,
+    "sha256": "9b5eb1eea3340b6c128027f76edc24b0497e94f8f3f6221d9652ad4ce45b966e"
   },
   {
     "path": "tools/finalize_flexsed_release.py",
@@ -967,7 +952,7 @@
   {
     "path": "voxloom/__init__.py",
     "bytes": 84,
-    "sha256": "2ce379226145efb635b450e7919d41b055b4152790d8fe0506972fc7fcc30cde"
+    "sha256": "ca8842f933735d08ae21015da712ddd87ec36d149d445585b213a4a12d96da1c"
   },
   {
     "path": "voxloom/_vendor/__init__.py",
@@ -996,18 +981,18 @@
   },
   {
     "path": "voxloom/audio.py",
-    "bytes": 5296,
-    "sha256": "d39bdb9f1df20c2ba851e53a3f5ef83949830e75ff46e62e16d90d6e9caf98aa"
+    "bytes": 5028,
+    "sha256": "11f849be6a435d748300103cfd4b8fc4ba0a883af4b0af2b0ce8b8d4ce81832d"
   },
   {
     "path": "voxloom/diagnostics.py",
-    "bytes": 2001,
-    "sha256": "f8e8b4e0275fc4d82691c1906a3b0acc6e6e2d4575a0738fe37d0edb0a4e376b"
+    "bytes": 1991,
+    "sha256": "f1341df333ed18327a49eb1693e35942874abbcf1766d2d56f5c150187987d01"
   },
   {
     "path": "voxloom/events.py",
-    "bytes": 7825,
-    "sha256": "28aa5c3473d1a2ee1cfd6b40be06fb515735e5250c4bbaa09b1614953087c7cd"
+    "bytes": 7713,
+    "sha256": "200873be13516ce000a5fe7a0e848b3fc4f92a4c527e516ccb387c464433e504"
   },
   {
     "path": "voxloom/files.py",
@@ -1015,14 +1000,24 @@
     "sha256": "6296290af420591a02b2e5dcc507d3b588c5781247e5aec25710f4d944ea8b76"
   },
   {
+    "path": "voxloom/i18n.py",
+    "bytes": 1527,
+    "sha256": "c49ac6362a94a297737ea75d769ce809ccbda8419e4ad9458fe5906d711ad0cf"
+  },
+  {
     "path": "voxloom/jobs.py",
-    "bytes": 5106,
-    "sha256": "84bc504a8c4efdc458f0e9f3a0b3d19614f76b62dc1e9d5cdeeab619c9025360"
+    "bytes": 5093,
+    "sha256": "afc9af3280b195eb5a170729fe7d2375079affa20d78fbcc3a68efff765c8874"
   },
   {
     "path": "voxloom/modelpacks.py",
-    "bytes": 5617,
-    "sha256": "d4837ea908fbf5b3ddbe6bc607d74915dd45a62c23597924f4d1d1fc3c2233e1"
+    "bytes": 5342,
+    "sha256": "3f78b6a5554e01f378a1cc4471adf317d37771348e850e9a722c156a20d44344"
+  },
+  {
+    "path": "voxloom/modules.py",
+    "bytes": 6524,
+    "sha256": "ce943d02553367cb173b5130ace9c45094ece0e4fa69274eb9df15df9455954c"
   },
   {
     "path": "voxloom/playback.py",
@@ -1031,47 +1026,52 @@
   },
   {
     "path": "voxloom/processing.py",
-    "bytes": 8246,
-    "sha256": "ef9cc8646d3447588f4536076204a42a650499571e13ebc2c8e0e355e8fc83c1"
+    "bytes": 8255,
+    "sha256": "85edda4c778c856f231541fe58c1def6e603bf36a56e411752bbf5d208938dbf"
   },
   {
     "path": "voxloom/rnnoise_native.py",
-    "bytes": 2408,
-    "sha256": "89504a2569c057e97bb7a6219d2c0f796da5406938530055cb58199da993d20e"
+    "bytes": 2375,
+    "sha256": "9a7646f73add5098d3701fa22bc5b7b357382277af08984dea4fd97e175f15c3"
   },
   {
     "path": "voxloom/smoke.py",
-    "bytes": 4882,
-    "sha256": "405a9faeb73299774e3fc677bf0ef54fa6bcddc695a07467ffa091f70329a019"
+    "bytes": 5807,
+    "sha256": "51626828165985c04b5b5c2bc7be480c7388959a3da4d587f8f2729519d27a46"
   },
   {
     "path": "voxloom/speech.py",
-    "bytes": 5384,
-    "sha256": "926e07878f36b436f1cb79be0b74aa82cc8648476a7e329109d9ec68e08310f4"
+    "bytes": 5297,
+    "sha256": "d8c15534ffb4b378145528a779571a79cb7ad333a53084b7932c1e51c49a2f8c"
   },
   {
     "path": "voxloom/startup.py",
-    "bytes": 4627,
-    "sha256": "51ac24164f821b12382fb65913e5883c31a0d6045a22c39a73dc53bab9e94aaa"
+    "bytes": 4652,
+    "sha256": "cec9613ec2660a273d47bcbc93cfb8afa3d202b07c2eace6f8c9cea56fc41756"
   },
   {
     "path": "voxloom/timeline.py",
-    "bytes": 11900,
-    "sha256": "48867f39eee7b8bf3078ef80c845d22032c050ad11a3731e1102f52a36c94fc0"
+    "bytes": 11910,
+    "sha256": "e5e7b722df00a3672a83da309b556706d6c9fc1e5c5d1c58cbc829b066cecf49"
+  },
+  {
+    "path": "voxloom/ui_language.py",
+    "bytes": 2815,
+    "sha256": "4fe35c61d1903805dfe62984f9da3c4748195fe6168f7e6fc681ffa3c47f22c0"
   },
   {
     "path": "voxloom/window.py",
-    "bytes": 54667,
-    "sha256": "c4abda0ce25c795cc2cb7a556271da3cddc6c5425c5484c78d3094a3ab7b3779"
+    "bytes": 54360,
+    "sha256": "6cb8a344b0b6068a963dc34f6f202a64bd58424664db9d0131023a0e9c00645c"
   },
   {
     "path": "voxloom/worker.py",
-    "bytes": 3843,
-    "sha256": "403cc60e297f8d01e6f4d435de94644d7ebd216fd5f7ef5ff69ed6fb5d7e33e5"
+    "bytes": 3860,
+    "sha256": "0006bd78a00437d4ad900c30dd5147c24e509dd363fb56726e230eaa87783623"
   },
   {
     "path": "VoxLoom.spec",
-    "bytes": 5329,
-    "sha256": "53eb8687adc43a010b4b41aa2b8d902f1edad000537b1d1a6acd48620a14d128"
+    "bytes": 5599,
+    "sha256": "9f0d15282abe4ece89cbe5204204090878e812336085315b5478b913ed15e6e5"
   }
 ]

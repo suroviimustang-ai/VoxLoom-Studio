@@ -13,14 +13,21 @@ sys.path.insert(0, str(ROOT))
 
 def check(name):
     import numpy as np
+    from PyQt6 import QtCore as C
     from PyQt6 import QtWidgets as W
 
     from voxloom.speech import Region
     from voxloom.startup import StartupSplash, show_workspace
+    from voxloom.ui_language import initialize
     from voxloom.window import MainWindow
 
     app = W.QApplication([])
     app.setStyle("Fusion")
+    settings = C.QSettings(
+        str(OUT / f"{name}-settings.ini"), C.QSettings.Format.IniFormat
+    )
+    settings.clear()
+    initialize(app, settings)
     screen = app.screens()[-1]
     available = screen.availableGeometry()
     splash = StartupSplash(screen)
@@ -29,7 +36,9 @@ def check(name):
     assert available.contains(splash.geometry())
     assert (splash.geometry().center() - available.center()).manhattanLength() <= 2
     splash.grab().save(str(OUT / f"{name}-splash.png"))
-    window = MainWindow()
+    window = MainWindow(settings)
+    assert window.open_button.text() == "Open audio"
+    assert window.ui_language.currentData() == "en"
     show_workspace(window, screen)
     for _ in range(5):
         app.processEvents()
@@ -47,6 +56,7 @@ def check(name):
         essential = [
             window.open_button,
             window.models_button,
+            window.ui_language,
             window.export_button,
             window.play_button,
             window.stop_button,
@@ -123,6 +133,42 @@ def check(name):
     window.refresh()
     app.processEvents()
     check_controls()
+    # Changing UI language must not reset audio, selection, edits or ASR settings.
+    before = (
+        window.selection,
+        window.language.currentData(),
+        window.asr_model.currentText(),
+    )
+    for code, caption in (("ru", "Открыть аудио"), ("en", "Open audio")):
+        window.ui_language.setCurrentIndex(window.ui_language.findData(code))
+        app.processEvents()
+        assert window.open_button.text() == caption
+        assert window.transcript.toPlainText() == text
+        assert window.source is signal
+        assert before == (
+            window.selection,
+            window.language.currentData(),
+            window.asr_model.currentText(),
+        )
+        restored = C.QSettings(settings.fileName(), C.QSettings.Format.IniFormat)
+        assert restored.value("ui_language") == code
+        initialize(app, restored)
+        if code == "ru":
+            assert not app._qt_language.isEmpty(), "Qt Russian dialogs are missing"
+        check_controls()
+        window.grab().save(str(OUT / f"{name}-{code}-workspace.png"))
+        if name == "laptop":
+
+            def check_models():
+                dialog = app.activeModalWidget()
+                assert available.contains(dialog.frameGeometry())
+                browser = dialog.findChild(W.QTextBrowser)
+                assert browser.toHtml().count("releases/download/") == 5
+                dialog.grab().save(str(OUT / f"{name}-{code}-models.png"))
+                dialog.accept()
+
+            C.QTimer.singleShot(100, check_models)
+            window.models()
     if window._narrow_results:
         window.results_tabs.setCurrentWidget(window.transcript_box)
         app.processEvents()
@@ -160,6 +206,8 @@ def check(name):
         device_pixel_ratio=screen.devicePixelRatio(),
         maximized=window.isMaximized(),
         all_tool_pages_unclipped=True,
+        ui_languages=["en", "ru"],
+        language_switch_preserves_session=True,
         compact=window._density_mode,
         tabbed_results=window._narrow_results,
     )
