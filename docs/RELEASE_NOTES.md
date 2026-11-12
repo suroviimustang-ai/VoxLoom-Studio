@@ -17,6 +17,8 @@ Every published platform package must pass native bundle checks, installation of
 all five model packs, frozen GUI/codec/model checks and an installed or mounted
 distribution check. Build reports identify the exact source commit and checks.
 `SHA256SUMS.txt` covers the applications, model packs and source archive.
+The small `VoxLoom-synthetic-speech.wav` asset is generated test audio used by all
+three builds; it contains no user recording and is included for reproducibility.
 
 Windows binaries are unsigned. The macOS app is not Developer ID signed or
 notarized; Intel Mac builds are not included. Recognition results are model

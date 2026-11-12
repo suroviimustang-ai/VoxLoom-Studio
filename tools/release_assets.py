@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tomllib
@@ -59,6 +60,7 @@ def upload_report(name, files, checks):
         "checks": checks,
     }
     path = ROOT / "release-native" / name
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     gh("release", "upload", TAG, *files, path, "--clobber")
 
@@ -67,7 +69,15 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "action",
-        choices=["init", "upload-models", "download-models", "upload-app", "publish"],
+        choices=[
+            "init",
+            "upload-models",
+            "download-models",
+            "upload-fixture",
+            "download-fixture",
+            "upload-app",
+            "publish",
+        ],
     )
     args = parser.parse_args()
     if os.environ.get("GITHUB_ACTIONS") != "true":
@@ -100,7 +110,25 @@ def main():
     current = release()
     if not current["draft"] or current["target_commitish"] != os.environ["GITHUB_SHA"]:
         raise RuntimeError("Release must be a draft for this exact source commit")
-    if args.action == "download-models":
+    if args.action == "upload-fixture":
+        destination = ROOT / "release-native/VoxLoom-synthetic-speech.wav"
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(ROOT / "artifacts/speech_fixture.wav", destination)
+        upload_report("speech-fixture.json", [destination], ["windows-sapi-synthetic"])
+    elif args.action == "download-fixture":
+        destination = ROOT / "artifacts"
+        destination.mkdir(exist_ok=True)
+        name = "VoxLoom-synthetic-speech.wav"
+        gh("release", "download", TAG, "--pattern", name, "--dir", destination)
+        info = file_info(destination / name)
+        remote = next(asset for asset in current["assets"] if asset["name"] == name)
+        if (
+            remote["size"] != info["bytes"]
+            or remote.get("digest") != "sha256:" + info["sha256"]
+        ):
+            raise RuntimeError("Synthetic speech fixture checksum mismatch")
+        shutil.copy2(destination / name, destination / "speech_fixture.wav")
+    elif args.action == "download-models":
         destination = ROOT / "artifacts/model-packs"
         destination.mkdir(parents=True, exist_ok=True)
         gh(
@@ -156,6 +184,7 @@ def main():
         destination.mkdir(parents=True, exist_ok=True)
         for name in [
             "model-packs.json",
+            "speech-fixture.json",
             *[f"build-{p}.json" for p in PLATFORMS.values()],
         ]:
             gh("release", "download", TAG, "--pattern", name, "--dir", destination)

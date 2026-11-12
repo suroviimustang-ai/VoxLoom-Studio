@@ -4,6 +4,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 import tomllib
 from pathlib import Path
 
@@ -123,7 +124,21 @@ def main():
         )
     finally:
         if mount is not None:
-            subprocess.run(["hdiutil", "detach", str(mount)], check=True, timeout=120)
+            # Spotlight/LaunchServices can briefly retain a just-tested bundle.
+            # This mount is our own read-only image; no user volume is targeted.
+            for attempt in range(3):
+                detached = subprocess.run(
+                    ["hdiutil", "detach", str(mount)], check=False, timeout=120
+                )
+                if detached.returncode == 0:
+                    break
+                time.sleep(2 * (attempt + 1))
+            else:
+                subprocess.run(
+                    ["hdiutil", "detach", "-force", str(mount)],
+                    check=True,
+                    timeout=120,
+                )
 
 
 if __name__ == "__main__":

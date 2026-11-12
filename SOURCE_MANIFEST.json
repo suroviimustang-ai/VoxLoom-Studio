@@ -26,8 +26,8 @@
   },
   {
     "path": ".github/workflows/release.yml",
-    "bytes": 4290,
-    "sha256": "ab98c6695b03abfbc32b6e896ea4d54e90f6c2d5349e7649a1a1734557f723a1"
+    "bytes": 4508,
+    "sha256": "d5da8cc6cf859f6455952cc2b4c3a177926435ecde317168f98f3d57d06f0970"
   },
   {
     "path": ".gitignore",
@@ -136,13 +136,13 @@
   },
   {
     "path": "docs/RELEASE_NOTES.md",
-    "bytes": 1686,
-    "sha256": "fb134d18e85ab7fe14f871772e26f49f80a84144d4333eb5aba2ea1b236363d5"
+    "bytes": 1850,
+    "sha256": "63f1c399a62c73925aea671c4b0c7972b1869f120eb100b062f55eba91b0179e"
   },
   {
     "path": "docs/RELEASING.md",
-    "bytes": 2713,
-    "sha256": "d7d2739d24fc6af317e08b4663a9335a4a93d39dfa2dde4d1fa52462f5bbd79c"
+    "bytes": 2829,
+    "sha256": "1dd60686a24ff9390ce754383ee7f5488c600f63aa2a44f3f2f92a5c616d7724"
   },
   {
     "path": "LICENSE",
@@ -861,8 +861,8 @@
   },
   {
     "path": "tools/check_package.py",
-    "bytes": 4008,
-    "sha256": "2a65900897210f7fa8c2d485a5ce2dfd64d1ed6e1514cdc82eb8a99984ed1ca2"
+    "bytes": 4587,
+    "sha256": "cd8e302af5827540b1080fdcab9891b15759b415f44993b3d5ae7a0ca994592f"
   },
   {
     "path": "tools/check_powershell.ps1",
@@ -951,8 +951,8 @@
   },
   {
     "path": "tools/release_assets.py",
-    "bytes": 6703,
-    "sha256": "449854969bb72999c70a764489a98bd772d092871a4bee1d479345e55abd8077"
+    "bytes": 7946,
+    "sha256": "261b35d7999e25597f115e3c17bd437275da59bdaeb0fcab3a2cb90532d66328"
   },
   {
     "path": "tools/verify_native_bundle.py",

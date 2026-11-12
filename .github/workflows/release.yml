@@ -19,18 +19,23 @@ env:
   HF_HUB_DISABLE_XET: '1'
 jobs:
   speech-fixture:
+    needs: models
     runs-on: windows-2022
     timeout-minutes: 10
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
       - name: Generate natural synthetic speech fixture
         shell: powershell
         run: ./tools/prepare_speech_fixture.ps1
-      - uses: actions/upload-artifact@v4
-        with:
-          name: release-speech-fixture
-          path: artifacts/speech_fixture.wav
-          retention-days: 1
+      - name: Upload synthetic speech to release draft
+        run: python tools/release_assets.py upload-fixture
   models:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
@@ -86,10 +91,9 @@ jobs:
           python tools/ci_install.py
       - name: Build compact native bundle
         run: python tools/build_portable.py --compact
-      - uses: actions/download-artifact@v4
-        with:
-          name: release-speech-fixture
-          path: artifacts
+      - name: Download and verify synthetic speech fixture
+        timeout-minutes: 8
+        run: python tools/release_assets.py download-fixture
       - name: Download optional model packs for validation
         run: python tools/release_assets.py download-models
       - name: Test model installation and frozen workers offline
@@ -102,6 +106,8 @@ jobs:
         run: python tools/release_assets.py upload-app
       - name: Upload validation reports
         if: always()
+        continue-on-error: true
+        timeout-minutes: 3
         uses: actions/upload-artifact@v4
         with:
           name: native-package-checks-${{ matrix.os }}

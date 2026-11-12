@@ -18,7 +18,8 @@ never as Git blobs. Do not publish private recordings, transcripts or local logs
 5. The model job creates a **draft** release and uploads verified packs and the
    source archive. The native matrix builds compact Windows EXE, Linux AppImage
    and macOS ARM64 DMG packages on their respective operating systems.
-6. Each platform installs the model ZIPs through the frozen worker, runs the GUI
+6. A Windows job generates a synthetic SAPI speech fixture and uploads it to the
+   same draft. Each platform verifies its checksum, installs the model ZIPs through the frozen worker, runs the GUI
    and offline codec/model checks, then verifies the final installed/mounted package.
 7. Only after all platform jobs succeed does the publisher compare uploaded hashes
    against reports from the same commit and publish the preview release.
