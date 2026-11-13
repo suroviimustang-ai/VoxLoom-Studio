@@ -1,11 +1,11 @@
 import os
+import runpy
 import sys
 import tomllib
 from importlib.metadata import distribution
 from pathlib import Path
 
 from PyInstaller.utils.hooks import collect_all, collect_data_files, copy_metadata
-from PyQt6.QtCore import QLibraryInfo
 
 root = Path(SPECPATH).resolve()
 app_version = tomllib.loads((root / "pyproject.toml").read_text("utf-8"))["project"][
@@ -43,8 +43,7 @@ datas = [
     (str(root / "docs/DOWNLOADS.md"), "docs"),
     (
         str(
-            Path(QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath))
-            / "qtbase_ru.qm"
+            distribution("PyQt6-Qt6").locate_file("PyQt6/Qt6/translations/qtbase_ru.qm")
         ),
         "PyQt6/Qt6/translations",
     ),
@@ -123,21 +122,14 @@ if sys.platform == "win32":
         for entry in a.binaries
         if Path(entry[0]).name.lower() not in {"icuuc.dll", "icudt78.dll"}
     ]
-# PyQt's wheel includes an older C++ runtime. The Qt runtime hook loads it
-# before ONNX in frozen workers unless every copy uses the same newer runtime.
+# PyQt's wheel includes an older C++ runtime. The first collected root DLL is
+# not necessarily the newest one; harmonize all copies against a complete set.
 if sys.platform == "win32":
-    runtime_names = {"msvcp140.dll", "vcruntime140.dll", "vcruntime140_1.dll"}
-    runtime_sources = {
-        dest.lower(): source
-        for dest, source, kind in a.binaries
-        if dest.lower() in runtime_names
-    }
-    if runtime_sources.keys() != runtime_names:
-        raise RuntimeError("Missing canonical Visual C++ runtime in binary collection")
-    a.binaries = [
-        (dest, runtime_sources.get(Path(dest).name.lower(), source), kind)
-        for dest, source, kind in a.binaries
-    ]
+    runtime_tools = runpy.run_path(str(root / "tools/windows_runtime.py"))
+    a.binaries = runtime_tools["harmonize"](
+        a.binaries,
+        (Path(sys.base_prefix), Path(os.environ["SystemRoot"]) / "System32"),
+    )
 pyz = PYZ(a.pure)
 exe = EXE(
     pyz,

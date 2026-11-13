@@ -26,8 +26,8 @@
   },
   {
     "path": ".github/workflows/release.yml",
-    "bytes": 4508,
-    "sha256": "d5da8cc6cf859f6455952cc2b4c3a177926435ecde317168f98f3d57d06f0970"
+    "bytes": 4556,
+    "sha256": "19e69feabef8e9613f25ade8dbb88de41e8171a1e1967960031089c8ef84bffb"
   },
   {
     "path": ".gitignore",
@@ -81,8 +81,8 @@
   },
   {
     "path": "CHANGELOG.md",
-    "bytes": 2437,
-    "sha256": "109c0c6b67968b6ab79750c1e9dda08f278abfcc02d92930d14370c7da6a38e4"
+    "bytes": 2584,
+    "sha256": "12c37f08d7396981ab716fdfbf4687db093ea7383218204fd43307f3c534ef9f"
   },
   {
     "path": "CONTRIBUTING.md",
@@ -96,8 +96,8 @@
   },
   {
     "path": "docs/BUILDING.md",
-    "bytes": 8875,
-    "sha256": "c1fd8e605f80f70adc0007e01be5ba592f12bdf1fe8c86128130b9a3070265ee"
+    "bytes": 9235,
+    "sha256": "d2030f484d289bb5ef5cb52272708d7ca82f5ab4e69cf2c582ad2758c0a1be13"
   },
   {
     "path": "docs/CODING_STANDARDS.md",
@@ -820,6 +820,11 @@
     "sha256": "6402d23aea9cafcc4b9db819bf5a7c8ecf22a34b28b6c8b9cd4f68d35bdd010f"
   },
   {
+    "path": "tests/test_windows_runtime.py",
+    "bytes": 1635,
+    "sha256": "3c7ef26e7981ef23bffd9860394a068d293b47d4b79e375c90be59e03d0b5e8f"
+  },
+  {
     "path": "tests/test_worker.py",
     "bytes": 2090,
     "sha256": "f8bda19f567e069c58c3948eb9c0916b34bfc9e09fc9f19eb7a69e3da4108667"
@@ -886,8 +891,8 @@
   },
   {
     "path": "tools/export_public.py",
-    "bytes": 4869,
-    "sha256": "9b5eb1eea3340b6c128027f76edc24b0497e94f8f3f6221d9652ad4ce45b966e"
+    "bytes": 4895,
+    "sha256": "680ad38ab3cd133379292439317dc5b8d28e2a00901aff0c89b6896661c091d2"
   },
   {
     "path": "tools/finalize_flexsed_release.py",
@@ -948,6 +953,11 @@
     "path": "tools/verify_release.py",
     "bytes": 3700,
     "sha256": "4f0adaa08722166c98ac7d63afc79b4e630507dbb87584fe95eabcd2903cf6fb"
+  },
+  {
+    "path": "tools/windows_runtime.py",
+    "bytes": 2488,
+    "sha256": "9a83ca4dff24900f3b23d57528b23300f8f869fd81deb40b167653fc8fe114ec"
   },
   {
     "path": "voxloom/__init__.py",
@@ -1036,8 +1046,8 @@
   },
   {
     "path": "voxloom/smoke.py",
-    "bytes": 5807,
-    "sha256": "51626828165985c04b5b5c2bc7be480c7388959a3da4d587f8f2729519d27a46"
+    "bytes": 6058,
+    "sha256": "8765cccd110aa450d7729517dbde454189f182a1c0798a1dfc2c5c55120ed995"
   },
   {
     "path": "voxloom/speech.py",
@@ -1071,7 +1081,7 @@
   },
   {
     "path": "VoxLoom.spec",
-    "bytes": 5599,
-    "sha256": "9f0d15282abe4ece89cbe5204204090878e812336085315b5478b913ed15e6e5"
+    "bytes": 5277,
+    "sha256": "050d1bd2eb9c9ffe8b7d80547bec9a5a2f196e124ed545ea5741c2c37afc5e6a"
   }
 ]

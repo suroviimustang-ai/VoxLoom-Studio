@@ -33,7 +33,12 @@ operations. Run all commands from the root of the downloaded or cloned project.
 
 ## Windows
 
-Install Python 3.11 x64 from python.org and Git. In PowerShell:
+Install Python 3.11 x64 from python.org, Git and the current
+[Microsoft Visual C++ x64 runtime](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist).
+The packager selects one complete x64 runtime and uses it for every bundled copy,
+including Qt's DLL directory. This prevents an older Qt runtime from shadowing
+ONNX dependencies. Ready-made applications already include these files.
+In PowerShell:
 
 ```powershell
 py -3.11 -m venv .venv311

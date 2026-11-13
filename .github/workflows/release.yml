@@ -115,6 +115,7 @@ jobs:
             artifacts/doctor.json
             artifacts/native-verification/*.json
             artifacts/native-verification/*.png
+            artifacts/native-verification/*.log
             artifacts/package-verification/report.json
             artifacts/packaged-worker-flexsed/report.json
           retention-days: 7

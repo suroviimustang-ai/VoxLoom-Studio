@@ -1,6 +1,7 @@
 """Release validation using the same UI and subprocess entry point as users."""
 
 import json
+import logging
 import time
 from pathlib import Path
 
@@ -11,6 +12,10 @@ from PyQt6 import QtWidgets as W
 def run(app, window, fixture, destination):
     root = Path(destination)
     root.mkdir(parents=True, exist_ok=True)
+    from .diagnostics import LOG
+
+    diagnostic_log = logging.FileHandler(root / "runtime.log", encoding="utf-8")
+    LOG.addHandler(diagnostic_log)
     errors, checks = [], []
     W.QMessageBox.warning = lambda parent, title, text: errors.append(text)
 
@@ -153,3 +158,6 @@ def run(app, window, fixture, destination):
         )
         window.close()
         return 1
+    finally:
+        LOG.removeHandler(diagnostic_log)
+        diagnostic_log.close()

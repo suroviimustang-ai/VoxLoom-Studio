@@ -7,6 +7,8 @@
 - Complete module catalog with verified download links and activation instructions.
 - English-only Markdown documentation; removed separate Russian files.
 - Added catalog/translation coverage, worker-language and session-preservation checks.
+- Select a complete current x64 Visual C++ runtime for all Windows DLL copies,
+  preventing Qt's older runtime from shadowing ONNX dependencies.
 
 
 ## 0.3.0

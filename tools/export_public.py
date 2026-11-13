@@ -57,6 +57,7 @@ TOOLS = (
     "verify_native_bundle.py",
     "check_package.py",
     "release_assets.py",
+    "windows_runtime.py",
 )
 DOCS = (
     "ARCHITECTURE.md",
