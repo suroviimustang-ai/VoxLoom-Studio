@@ -1,7 +1,7 @@
 # Download and install
 
 
-This guide covers **VoxLoom 0.4.0**. A normal installation needs no separate Python,
+This guide covers **VoxLoom 0.4.1**. A normal installation needs no separate Python,
 Git, Windows terminal, API keys or dedicated graphics card. The interface starts
 in English on Windows, macOS and Linux. Choose **Русский** in the top bar to
 switch immediately; the setting is saved. Transcription language is independent.
@@ -10,14 +10,14 @@ Documentation is provided in English.
 ## 1. Download the app for your system
 
 Use a direct link below. The same files are in **Assets** on the
-[0.4.0 release page](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/tag/v0.4.0).
+[0.4.1 release page](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/tag/v0.4.1).
 The **Source code** archives and `.json` build reports are not needed for installation.
 
 | System | Download | Install or launch |
 | --- | --- | --- |
-| Windows 10/11 x64 | [Download EXE](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.4.0/VoxLoom-Studio-0.4.0-windows-x64.exe) | Open the EXE, finish the installer, then launch VoxLoom from Start |
-| Ubuntu 24.04 x64 | [Download AppImage](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.4.0/VoxLoom-Studio-0.4.0-linux-x86_64.AppImage) | Make the file executable, then launch it |
-| macOS 15+ Apple Silicon | [Download DMG](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.4.0/VoxLoom-Studio-0.4.0-macos-arm64.dmg) | Open the image, drag VoxLoom into Applications, then launch it from Applications |
+| Windows 10/11 x64 | [Download EXE](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.4.1/VoxLoom-Studio-0.4.1-windows-x64.exe) | Open the EXE, finish the installer, then launch VoxLoom from Start |
+| Ubuntu 24.04 x64 | [Download AppImage](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.4.1/VoxLoom-Studio-0.4.1-linux-x86_64.AppImage) | Make the file executable, then launch it |
+| macOS 15+ Apple Silicon | [Download DMG](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.4.1/VoxLoom-Studio-0.4.1-macos-arm64.dmg) | Open the image, drag VoxLoom into Applications, then launch it from Applications |
 
 This binary release is a preview. Windows binaries are unsigned and the macOS
 app is not Developer ID signed or notarized. Consult the release reports for the
@@ -27,14 +27,14 @@ this dependency profile.
 On Linux:
 
 ```bash
-chmod +x VoxLoom-Studio-0.4.0-linux-x86_64.AppImage
-./VoxLoom-Studio-0.4.0-linux-x86_64.AppImage
+chmod +x VoxLoom-Studio-0.4.1-linux-x86_64.AppImage
+./VoxLoom-Studio-0.4.1-linux-x86_64.AppImage
 ```
 
 If the system has no FUSE support, the runtime also supports:
 
 ```bash
-APPIMAGE_EXTRACT_AND_RUN=1 ./VoxLoom-Studio-0.4.0-linux-x86_64.AppImage
+APPIMAGE_EXTRACT_AND_RUN=1 ./VoxLoom-Studio-0.4.1-linux-x86_64.AppImage
 ```
 
 ## 2. Choose your models
@@ -43,13 +43,13 @@ APPIMAGE_EXTRACT_AND_RUN=1 ./VoxLoom-Studio-0.4.0-linux-x86_64.AppImage
 Russian, into text and is already selected by default in the app. Optionally add
 DeepFilterNet3 for neural speech cleanup. Other packs can be installed later.
 
-Version 0.4.0 has no built-in model downloader: open a link below in your browser,
+Version 0.4.1 has no built-in model downloader: open a link below in your browser,
 save the ZIP, then import it into the app. The same model packs work on Windows,
 macOS and Linux.
 
 The compact app includes Spectral Gate, DSP, RNNoise and Silero VAD. Download only
 the additional ZIP packs you need. The verified v1 links below pin release 0.3.0
-and are compatible with 0.4.0, whose trusted model catalog is unchanged:
+and are compatible with 0.4.1, whose trusted model catalog is unchanged:
 
 | Download pack | Purpose | Download / installed size, approximately |
 | --- | --- | --- |
@@ -125,10 +125,20 @@ be rejected if a future app version changes its trusted catalog; use matching pa
 Each release includes `SHA256SUMS.txt` and build reports. For example, on Windows:
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\VoxLoom-Studio-0.4.0-windows-x64.exe
+Get-FileHash -Algorithm SHA256 .\VoxLoom-Studio-0.4.1-windows-x64.exe
 ```
 
 Compare the result with the matching filename in `SHA256SUMS.txt`. On Linux use
 `sha256sum`, or `shasum -a 256` on macOS. The app also verifies model contents during
 installation. Model outputs still require listening checks; integrity checks do
 not establish transcription accuracy.
+
+## Desktop menus
+
+File opens recordings and exports audio, text, subtitles and markers. Edit provides
+text editing and **Undo processing (Ctrl+Alt+Z)**; Ctrl+Z undoes text edits in the
+focused editor. View changes waveform zoom, tool pages and interface language.
+Process runs cleanup, normalization, speech/event detection and transcription,
+and opens Models. About shows the application version and project link.
+Commands that require audio or a selection stay disabled until available.
+English CLAP queries and event labels are preserved when changing UI language.

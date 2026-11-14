@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "voxloom-studio"
-version = "0.4.0"
+version = "0.4.1"
 description = "Local DAW-style speech restoration, segmentation and transcription"
 requires-python = ">=3.11"
 license = {file = "LICENSE"}
@@ -23,8 +23,8 @@ line-length = 88
 extend-include = ["*.spec"]
 extend-exclude = [
     ".venv*", ".tooling", "artifacts", "public-export",
-    "build", "build-flexsed", "build-flexsed-entry", "build-native",
-    "dist", "dist-flexsed", "dist-native",
+    "build", "build-*",
+    "dist", "dist-*", "downloads",
     "release", "results", "models", "licenses", "voxloom/_vendor",
 ]
 

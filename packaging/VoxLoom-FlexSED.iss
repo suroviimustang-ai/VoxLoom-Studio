@@ -1,4 +1,4 @@
-#define AppVersion "0.4.0"
+#define AppVersion "0.4.1"
 [Setup]
 AppId={{E7154787-0A29-47F9-AC3F-031CA0F2C83A}
 AppName=VoxLoom Studio

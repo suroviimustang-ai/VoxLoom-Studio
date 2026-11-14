@@ -43,6 +43,16 @@ def run(app, window, fixture, destination):
 
         assert language() == "en" and window.open_button.text() == "Open audio"
         checks.append("english-first-launch")
+        assert [action.text() for action in window.menuBar().actions()] == [
+            "&File",
+            "&Edit",
+            "&View",
+            "&Process",
+            "&About",
+        ]
+        assert window.menus.actions["open"].isEnabled()
+        assert not window.menus.actions["export"].isEnabled()
+        checks.append("classic-desktop-menus")
         assert catalog_html().count("releases/download/") == 5
         checks.append("complete-model-download-catalog")
         from .processing import WHISPER_MODELS, whisper_ready
@@ -103,6 +113,9 @@ def run(app, window, fixture, destination):
             window.ui_language.setCurrentIndex(window.ui_language.findData(code))
             app.processEvents()
             assert window.open_button.text() == expected
+            assert window.menus.file.title() == ("&Файл" if code == "ru" else "&File")
+            assert window.event_queries.text() == "Conversation"
+            assert all(event["label"] == "Conversation" for event in window.events)
             assert window.selection == selection
             assert window.transcript.toPlainText() == transcript
             assert window.language.currentData() == "en"

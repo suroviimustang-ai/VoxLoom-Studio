@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.1
+
+- Add classic File, Edit, View, Process and About menus in English and Russian.
+- Share menu commands and enabled states with the workspace controls.
+- Preserve native text-editor undo; use Ctrl+Alt+Z to undo audio processing.
+- Keep English CLAP queries and event names unchanged when switching languages.
+
 ## 0.4.0
 
 - English-first UI with persistent live Russian switching on all platforms.

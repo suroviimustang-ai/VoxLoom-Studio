@@ -27,17 +27,17 @@
 
 ## First launch
 
-1. Download the app for your system: [Windows EXE](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.4.0/VoxLoom-Studio-0.4.0-windows-x64.exe), [Ubuntu AppImage](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.4.0/VoxLoom-Studio-0.4.0-linux-x86_64.AppImage), or [macOS Apple Silicon DMG](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.4.0/VoxLoom-Studio-0.4.0-macos-arm64.dmg).
+1. Download the app for your system: [Windows EXE](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.4.1/VoxLoom-Studio-0.4.1-windows-x64.exe), [Ubuntu AppImage](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.4.1/VoxLoom-Studio-0.4.1-linux-x86_64.AppImage), or [macOS Apple Silicon DMG](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.4.1/VoxLoom-Studio-0.4.1-macos-arm64.dmg).
 2. For your first transcript, download [Whisper Small — ZIP, 448 MB](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.3.0/VoxLoom-Models-whisper-small-v1.zip). For neural speech cleanup, optionally add [DeepFilterNet3 — ZIP, 8 MB](https://github.com/suroviimustang-ai/VoxLoom-Studio/releases/download/v0.3.0/VoxLoom-Models-DeepFilterNet3-v1.zip).
 3. Launch VoxLoom and choose **Models → Install pack…**. Select the downloaded ZIP files without unpacking them.
 
 **[Step-by-step installation guide](docs/DOWNLOADS.md) · [All modules: downloads and activation](docs/MODULES.md).**
-No separate Python, Git, API keys or dedicated graphics card are required. In 0.4.0,
+No separate Python, Git, API keys or dedicated graphics card are required. In 0.4.1,
 download model packs manually using the links; the app verifies and installs them.
 
 ![VoxLoom workspace: original and processed tracks, speech regions and transcript](assets/screenshots/workspace.png)
 
-*VoxLoom 0.4.0 with English UI. The synthetic waveform and sample text illustrate
+*VoxLoom 0.4.1 with English UI. The synthetic waveform and sample text illustrate
 the interface, not recognition accuracy.*
 
 **Compact apps and separate model packs are distributed through
@@ -104,7 +104,10 @@ additional explanations appear in tooltips. Hover over truncated filenames and
 status messages to read them in full.
 
 Space: play/pause · Esc: stop · Ctrl+O: open · Ctrl+S: export audio ·
-Ctrl+Z: undo processing · Ctrl+mouse wheel: zoom the timeline.
+Ctrl+Alt+Z: undo processing · Ctrl+Z: undo text edits · Ctrl+mouse wheel: zoom the timeline.
+
+Classic **File, Edit, View, Process and About** menus provide the same commands
+as the workspace. Use **View → Interface language** to switch English/Russian.
 
 ## Run from source
 
@@ -148,7 +151,7 @@ The local Windows installer pipeline (`build.ps1`) requires Inno Setup 6 and an
 English Windows SAPI voice for its speech fixture. It checks mandatory weights,
 DLL imports, the frozen executable, codecs, VAD, denoisers, FlexSED and all three
 Whisper models without downloading models at runtime.
-Full installer output: `release/VoxLoom-Studio-Setup-0.4.0-Offline-win-x64.exe`.
+Full installer output: `release/VoxLoom-Studio-Setup-0.4.1-Offline-win-x64.exe`.
 The same pipeline's portable output is `dist-flexsed/VoxLoom/VoxLoom.exe`;
 keep the entire directory.
 

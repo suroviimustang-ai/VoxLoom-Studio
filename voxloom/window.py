@@ -24,6 +24,13 @@ from .ui_language import add_item, add_tab, apply_language, bind, retranslate
 STYLE = """
 QWidget { background: #161c25; color: #dbe5f3; font-family: 'Segoe UI'; font-size: 10pt; }
 QMainWindow { background: #10151d; }
+QMenuBar { background: #161c25; padding: 2px; }
+QMenuBar::item { padding: 4px 10px; background: transparent; }
+QMenuBar::item:selected, QMenu::item:selected { background: #31425a; }
+QMenu { background: #202b3b; border: 1px solid #37475f; padding: 4px; }
+QMenu::item { padding: 6px 24px; }
+QMenu::item:disabled { color: #637087; }
+QMenu::separator { height: 1px; background: #37475f; margin: 4px; }
 QLabel#brand { font-size: 22pt; font-weight: 700; color: #f1f6ff; }
 QLabel#muted { color: #91a1b9; }
 QLabel#section { color: #5bdac6; font-size: 10pt; font-weight: 600; padding: 8px 0; }
@@ -128,19 +135,30 @@ class MainWindow(W.QMainWindow):
         self._density_mode = None
         self._narrow_results = None
         self._build()
+        from .menus import WorkspaceMenus
+
+        self.menus = WorkspaceMenus(self)
         self.timer = C.QTimer(self)
         self.timer.timeout.connect(self.tick)
         self.timer.start(40)
+        self.transport_shortcuts = []
         for sequence, action in [
             ("Space", self.toggle_play),
             ("Escape", self.stop),
-            ("Ctrl+O", self.open_file),
-            ("Ctrl+Z", self.undo),
-            ("Ctrl+S", self.export_audio),
         ]:
             shortcut = G.QShortcut(G.QKeySequence(sequence), self)
             shortcut.activated.connect(action)
+            self.transport_shortcuts.append(shortcut)
+        W.QApplication.instance().focusChanged.connect(self.update_transport_shortcuts)
+        self.update_transport_shortcuts()
         self.refresh()
+
+    def update_transport_shortcuts(self, *args):
+        editing = isinstance(
+            self.focusWidget(), (W.QLineEdit, W.QTextEdit, W.QPlainTextEdit)
+        )
+        for shortcut in self.transport_shortcuts:
+            shortcut.setEnabled(not editing)
 
     def button(self, text, callback, primary=False):
         button = W.QPushButton()
@@ -561,6 +579,7 @@ class MainWindow(W.QMainWindow):
         retranslate(self)
         self.timeline.update()
         bind(self.message, "setText", tr("Interface language saved."))
+        self.menus.refresh()
 
     def _apply_density(self):
         if not hasattr(self, "page_layouts"):
@@ -661,6 +680,8 @@ class MainWindow(W.QMainWindow):
         self.cancel_button.setVisible(busy)
         self.progress.setVisible(busy)
         self.save_srt_button.setEnabled(bool(self.transcript_segments) and not busy)
+        if hasattr(self, "menus"):
+            self.menus.refresh()
 
     def error(self, text):
         bind(self.message, "setText", str(text).splitlines()[0][:180])

@@ -41,13 +41,13 @@
   },
   {
     "path": "assets/screenshots/workspace.png",
-    "bytes": 68283,
-    "sha256": "191a2944f77950a75d36b7d35f83cb9130b5e50fdc04005e733aa4c7fc9341cf"
+    "bytes": 70176,
+    "sha256": "4482ddc5089bcdcea2230d7911dcc84537f8c63defb5138c7babd40795c21152"
   },
   {
     "path": "assets/translations/ru.json",
-    "bytes": 26539,
-    "sha256": "dbb6701b4c2ab277f5585dade522c36a62d7f5a279ffe34df58459840f82fa78"
+    "bytes": 29241,
+    "sha256": "c668174128771f6cdc802000898a42cc5f273138870a1394143c43fd7b1971f0"
   },
   {
     "path": "assets/voxloom.icns",
@@ -81,8 +81,8 @@
   },
   {
     "path": "CHANGELOG.md",
-    "bytes": 2584,
-    "sha256": "12c37f08d7396981ab716fdfbf4687db093ea7383218204fd43307f3c534ef9f"
+    "bytes": 2909,
+    "sha256": "7a15d003d83659d91d66bbe1d5603ab3418448818977bb7e52da11da88d743ca"
   },
   {
     "path": "CONTRIBUTING.md",
@@ -106,8 +106,8 @@
   },
   {
     "path": "docs/DOWNLOADS.md",
-    "bytes": 8183,
-    "sha256": "b85b25cfd77b5b9057e72719995e5a6de09842bf921f039c6cc4314f652e4bc5"
+    "bytes": 8762,
+    "sha256": "d6582b20afe03e3fa427aa87b57b1302bad046a31681f37cce3b596af7e252e2"
   },
   {
     "path": "docs/LICENSES.md",
@@ -117,7 +117,7 @@
   {
     "path": "docs/MODULES.md",
     "bytes": 8081,
-    "sha256": "e23303c20fbefd66a576eb53de485158509b2505e1b7d21ce79e758ea800bf06"
+    "sha256": "fccff6c4a24c7e510a141bdc280b16465325d22fad49a487c33a4d6c661e0c85"
   },
   {
     "path": "docs/PUBLISHING.md",
@@ -126,8 +126,8 @@
   },
   {
     "path": "docs/RELEASE_NOTES.md",
-    "bytes": 1654,
-    "sha256": "3bfc4797e73f04b489f1fb2eefc259e43c3b6f249b3f4aa1a84fdb4a879b2e25"
+    "bytes": 1869,
+    "sha256": "91bbd60d22ffc1da781af7ad4a14fb9eba1f5aae0c7cd820f3fc3154301587bb"
   },
   {
     "path": "docs/RELEASING.md",
@@ -712,12 +712,12 @@
   {
     "path": "packaging/VoxLoom-Compact.iss",
     "bytes": 1371,
-    "sha256": "e46962d90869603f80c25c1ba097f73da9ee62410b14706cddc22b3f61c2b6fb"
+    "sha256": "07aa73479d50425f1b89f47010f63aaab332cc161ee1a524c4c2d6630729345d"
   },
   {
     "path": "packaging/VoxLoom-FlexSED.iss",
     "bytes": 1282,
-    "sha256": "7bc2f4220e249d7df62015f62a8f167695b411f882e2a22cfffa88ce6f2f8c1f"
+    "sha256": "781f83d7562702393d0d0ca0f739158d3fd6721f6110579dea89acf6cc488599"
   },
   {
     "path": "PSScriptAnalyzerSettings.psd1",
@@ -726,13 +726,13 @@
   },
   {
     "path": "pyproject.toml",
-    "bytes": 1115,
-    "sha256": "9803409d92e43f8d05356dafbaff34b429ca6af062cfba77065ff374385998bd"
+    "bytes": 1062,
+    "sha256": "28cfed63ee5926ca5ccba07864b59b608ac97255fe3d4e1935a4e28beac670be"
   },
   {
     "path": "README.md",
-    "bytes": 10875,
-    "sha256": "b7e5c8278ce7597dec19c9c96b434aa3a836322954fe6ff57d28b7e239fc1275"
+    "bytes": 11071,
+    "sha256": "0013c679018e56ff93e86eaa3e4d3f04a1aebef34ff45ea2bb0135f239a366a5"
   },
   {
     "path": "requirements-dev.txt",
@@ -793,6 +793,11 @@
     "path": "tests/test_i18n.py",
     "bytes": 2729,
     "sha256": "05859fdc49b51a872144a1a2111cdfd674f3a2a01734c4b529b90d1e6498ecec"
+  },
+  {
+    "path": "tests/test_menus.py",
+    "bytes": 2830,
+    "sha256": "efe0750842ed824af0b7adfbd89ef740906026586f369c5ae9a85069c157776a"
   },
   {
     "path": "tests/test_modelpacks.py",
@@ -962,7 +967,7 @@
   {
     "path": "voxloom/__init__.py",
     "bytes": 102,
-    "sha256": "ed771d2ad2eac18e58c6b1780a7720ded0b06412182da251aeea3b78cfa10645"
+    "sha256": "939cd8e0da5acb395606c7a1dfc4aed09aa82e8358dba3fea0e0515a3fa3dd89"
   },
   {
     "path": "voxloom/_vendor/__init__.py",
@@ -1020,6 +1025,11 @@
     "sha256": "afc9af3280b195eb5a170729fe7d2375079affa20d78fbcc3a68efff765c8874"
   },
   {
+    "path": "voxloom/menus.py",
+    "bytes": 8415,
+    "sha256": "5bf25146927e6e1dc484104816b5bcdcf17af91a988d14033d1724e2eb4da4ee"
+  },
+  {
     "path": "voxloom/modelpacks.py",
     "bytes": 5342,
     "sha256": "3f78b6a5554e01f378a1cc4471adf317d37771348e850e9a722c156a20d44344"
@@ -1046,8 +1056,8 @@
   },
   {
     "path": "voxloom/smoke.py",
-    "bytes": 6058,
-    "sha256": "8765cccd110aa450d7729517dbde454189f182a1c0798a1dfc2c5c55120ed995"
+    "bytes": 6659,
+    "sha256": "972012c5dfcd063d26fbe09a5de24cd78ffb29fefe2e4cd16e978937fa7ebf75"
   },
   {
     "path": "voxloom/speech.py",
@@ -1071,8 +1081,8 @@
   },
   {
     "path": "voxloom/window.py",
-    "bytes": 54358,
-    "sha256": "7c4ef0b998b329445d2310608952d24c8b13c6c48158e7234d178158b1602e74"
+    "bytes": 55304,
+    "sha256": "6d1db2da11be92851435ee22a8a0b65f4113cc9aeddd5fe1fa99cf59a85f4a7e"
   },
   {
     "path": "voxloom/worker.py",

@@ -1,6 +1,6 @@
 # Modules: downloads, installation and activation
 
-This is the complete supported catalog for VoxLoom 0.4.0 on Windows, macOS and
+This is the complete supported catalog for VoxLoom 0.4.1 on Windows, macOS and
 Ubuntu. Open **Models** in the app for the same instructions, clickable links and
 installation status in English or Russian. Five components are included; five
 optional packs cover all supported Whisper models, DeepFilterNet3 and FlexSED/CLAP.
@@ -16,7 +16,7 @@ optional packs cover all supported Whisper models, DeepFilterNet3 and FlexSED/CL
 4. Open audio and select the desired passage, or leave no selection to process the
    full track where supported. Transcription always requires a selection.
 
-The links pin published **v1 packs from release 0.3.0**, which also match 0.4.0's
+The links pin published **v1 packs from release 0.3.0**, which also match 0.4.1's
 unchanged trusted catalog. These are application-ready packs; upstream repositories
 are linked separately for provenance and development. Once installed, all inference
 is offline. You do not need Python, CUDA, an API account or separate CLAP downloads.
