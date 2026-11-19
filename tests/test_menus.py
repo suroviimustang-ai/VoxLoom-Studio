@@ -1,5 +1,7 @@
+from types import SimpleNamespace
 from unittest.mock import Mock
 
+import numpy as np
 import pytest
 from PyQt6 import QtCore as C
 from PyQt6 import QtWidgets as W
@@ -76,3 +78,69 @@ def test_text_undo_is_separate_from_processing_and_about_shows_version(
     monkeypatch.setattr(W.QMessageBox, "about", about)
     window.menus.actions["about"].trigger()
     assert __version__ in about.call_args.args[2]
+
+
+@pytest.mark.parametrize("outcome", ["success", "error", "cancel", "start_error"])
+def test_whisper_keeps_playback_and_transport_available(window, monkeypatch, outcome):
+    from voxloom.jobs import Job
+
+    window.source = np.zeros((48000 * 3, 1), np.float32)
+    window.selection = (0.5, 2.0)
+    player = SimpleNamespace(playing=True, stream=None, position=24000)
+    player.pause = Mock(side_effect=lambda: setattr(player, "playing", False))
+    player.play = Mock(side_effect=lambda *args: setattr(player, "playing", True))
+    window.player = player
+    window.error = Mock()
+    start = Mock(
+        side_effect=OSError("worker could not start")
+        if outcome == "start_error"
+        else None
+    )
+    monkeypatch.setattr(Job, "start", start)
+    window.transcribe()
+    player.pause.assert_not_called()
+    assert player.playing
+    assert window.play_button.isEnabled() and window.stop_button.isEnabled()
+    if outcome == "start_error":
+        assert window.job is None
+        window.error.assert_called_once()
+        return
+    assert not window.a_b.isEnabled() and not window.open_button.isEnabled()
+    assert start.call_args.args[0]["action"] == "transcribe"
+    window.toggle_play()
+    assert not player.playing
+    window.toggle_play()
+    assert player.playing
+    window.stop()
+    assert not player.playing
+    window.toggle_play()
+    player.pause.reset_mock()
+    job = window.job
+    job.cancelled = outcome == "cancel"
+    response = dict(
+        ok=outcome == "success",
+        text="Test",
+        segments=[],
+        language="en",
+        error="Test error",
+    )
+    job.finished.emit(response, None)
+    player.pause.assert_not_called()
+    assert player.playing and window.job is None
+    assert window.selection == (0.5, 2.0)
+
+
+@pytest.mark.parametrize("action", ["load", "denoise", "normalize"])
+def test_audio_replacement_jobs_still_pause_playback(window, monkeypatch, action):
+    from voxloom.jobs import Job
+
+    window.source = np.zeros((48000, 1), np.float32)
+    player = SimpleNamespace(playing=True, stream=None)
+    player.pause = Mock(side_effect=lambda: setattr(player, "playing", False))
+    window.player = player
+    monkeypatch.setattr(Job, "start", Mock())
+    window.run_job({"action": action}, "Test", lambda *_: None)
+    player.pause.assert_called_once()
+    assert not window.play_button.isEnabled()
+    window.toggle_play()
+    assert not player.playing

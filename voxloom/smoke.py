@@ -103,7 +103,14 @@ def run(app, window, fixture, destination):
             window.grab().save(str(root / "release-events.png"))
         window.select_range(window.regions[0].start, window.regions[-1].end)
         window.language.setCurrentIndex(window.language.findData("en"))
+        pauses = []
+        original_pause = window.player.pause
+        window.player.pause = lambda: pauses.append(True)
         window.transcribe()
+        window.player.pause = original_pause
+        assert not pauses, "Whisper must not stop playback"
+        assert window.play_button.isEnabled() and window.stop_button.isEnabled()
+        checks.append("whisper-preserves-playback-controls")
         wait()
         transcript = window.transcript.toPlainText()
         assert "speech" in transcript.lower(), transcript

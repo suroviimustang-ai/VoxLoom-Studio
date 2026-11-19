@@ -633,6 +633,11 @@ class MainWindow(W.QMainWindow):
             else self.source
         )
 
+    def playback_available(self):
+        return self.source is not None and (
+            self.job is None or getattr(self.job, "action", None) == "transcribe"
+        )
+
     def refresh(self):
         loaded, busy = self.source is not None, self.job is not None
         for widget in [
@@ -647,8 +652,6 @@ class MainWindow(W.QMainWindow):
         ]:
             widget.setEnabled(not busy)
         for widget in [
-            self.play_button,
-            self.stop_button,
             self.export_button,
             self.clean_button,
             self.normalize_button,
@@ -659,13 +662,15 @@ class MainWindow(W.QMainWindow):
             self.events_button,
         ]:
             widget.setEnabled(loaded and not busy)
+        self.play_button.setEnabled(self.playback_available())
+        self.stop_button.setEnabled(self.playback_available())
         self.a_b.model().item(1).setEnabled(self.result is not None)
         self.noise_button.setEnabled(loaded and self.selection is not None and not busy)
         self.transcribe_button.setEnabled(
             loaded and self.selection is not None and not busy
         )
         self.listen_button.setEnabled(
-            loaded and self.selection is not None and not busy
+            self.playback_available() and self.selection is not None
         )
         self.add_region_button.setEnabled(
             loaded
@@ -755,8 +760,10 @@ class MainWindow(W.QMainWindow):
     def run_job(self, request, title, callback, data=None, noise=None):
         if self.job:
             return
-        self.player.pause()
+        if request.get("action") != "transcribe":
+            self.player.pause()
         job = Job(self)
+        job.action = request.get("action")
         self.job = job
         bind(self.message, "setText", title)
         self.refresh()
@@ -1188,7 +1195,7 @@ class MainWindow(W.QMainWindow):
             self.toggle_play()
 
     def toggle_play(self):
-        if self.source is None or self.job:
+        if not self.playback_available():
             return
         if self.player.playing:
             self.player.pause()

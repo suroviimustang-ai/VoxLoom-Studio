@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.2
+
+- Keep playback running when Whisper starts, completes, fails or is cancelled.
+- Keep Play/Pause, Stop and Listen available during transcription while protecting
+  the selected source track and interval from changes.
+- Continue pausing playback before operations that replace audio.
+
 ## 0.4.1
 
 - Add classic File, Edit, View, Process and About menus in English and Russian.
