@@ -19,7 +19,9 @@ jobs:
       - name: Python formatting and static checks
         run: python tools/check_style.py
       - name: PowerShell formatting and static checks
-        shell: pwsh
+        # PSScriptAnalyzer 1.24.0 crashes inside Invoke-ScriptAnalyzer on PS 7.6.9.
+        # Windows PowerShell 5.1 runs the same pinned rules and script set.
+        shell: powershell
         run: |
           Save-Module -Name PSScriptAnalyzer -RequiredVersion 1.24.0 -Path .tooling -Repository PSGallery -Force
           ./tools/check_powershell.ps1

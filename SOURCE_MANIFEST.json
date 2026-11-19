@@ -21,13 +21,13 @@
   },
   {
     "path": ".github/workflows/ci.yml",
-    "bytes": 2243,
-    "sha256": "2b6989b11dc25cdedc550f72ca03d8f92aa0fcd928ddaaab522f6fb92436bd90"
+    "bytes": 2409,
+    "sha256": "53e09d84da31688c26dee3b8a46c90c5aee5fe31ace33dae302cbbc2546db22e"
   },
   {
     "path": ".github/workflows/release.yml",
-    "bytes": 4556,
-    "sha256": "19e69feabef8e9613f25ade8dbb88de41e8171a1e1967960031089c8ef84bffb"
+    "bytes": 4589,
+    "sha256": "218137aeb34292d561381e3426bd43fbaef4ced91443258409d9ada132bf72e6"
   },
   {
     "path": ".gitignore",
